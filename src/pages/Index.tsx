@@ -1,7 +1,6 @@
-
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Play, BookOpen, Trophy, Star, ChevronRight } from 'lucide-react';
+import { Play, BookOpen, Trophy, Star, ChevronRight, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -49,6 +48,12 @@ const Index = () => {
               <h1 className="text-2xl font-bold text-blue-600">LinguaLearn</h1>
             </div>
             <div className="flex items-center space-x-4">
+              <Link to="/admin/course-builder">
+                <Button variant="outline" size="sm">
+                  <Settings className="h-4 w-4 mr-2" />
+                  Course Builder
+                </Button>
+              </Link>
               <div className="flex items-center space-x-2 bg-orange-100 px-3 py-1 rounded-full">
                 <span className="text-orange-600 font-semibold">🔥 {currentStreak}</span>
                 <span className="text-orange-600 text-sm">day streak</span>
