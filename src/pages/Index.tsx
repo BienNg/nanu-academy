@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Play, BookOpen, Trophy, Star, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -69,10 +70,12 @@ const Index = () => {
             <div className="bg-gradient-to-r from-blue-500 to-green-500 rounded-2xl p-6 text-white">
               <h2 className="text-3xl font-bold mb-2">Welcome back!</h2>
               <p className="text-blue-100 mb-4">Ready to continue your German learning journey?</p>
-              <Button className="bg-white text-blue-600 hover:bg-gray-100">
-                <Play className="h-4 w-4 mr-2" />
-                Continue Learning
-              </Button>
+              <Link to="/course/1">
+                <Button className="bg-white text-blue-600 hover:bg-gray-100">
+                  <Play className="h-4 w-4 mr-2" />
+                  Continue Learning
+                </Button>
+              </Link>
             </div>
 
             {/* Courses */}
@@ -101,10 +104,12 @@ const Index = () => {
                         </div>
                         <div className="flex items-center space-x-2">
                           {course.isUnlocked ? (
-                            <Button>
-                              Continue
-                              <ChevronRight className="h-4 w-4 ml-1" />
-                            </Button>
+                            <Link to={`/course/${course.id}`}>
+                              <Button>
+                                Continue
+                                <ChevronRight className="h-4 w-4 ml-1" />
+                              </Button>
+                            </Link>
                           ) : (
                             <div className="text-gray-400 text-sm">🔒 Complete previous course</div>
                           )}
@@ -119,7 +124,6 @@ const Index = () => {
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Daily Goal */}
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center">
@@ -144,7 +148,11 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {recentActivity.map((activity, index) => (
+                  {[
+                    { lesson: "Articles: der, die, das", xp: 50, completed: true },
+                    { lesson: "Common Verbs", xp: 45, completed: true },
+                    { lesson: "Family Vocabulary", xp: 60, completed: false }
+                  ].map((activity, index) => (
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className={`w-3 h-3 rounded-full ${activity.completed ? 'bg-green-500' : 'bg-gray-300'}`}></div>
@@ -168,9 +176,11 @@ const Index = () => {
                 <BookOpen className="h-8 w-8 mx-auto mb-4" />
                 <h3 className="font-bold mb-2">Quick Practice</h3>
                 <p className="text-sm mb-4 text-purple-100">Review your vocab with flashcards</p>
-                <Button variant="secondary" className="w-full">
-                  Start Practice
-                </Button>
+                <Link to="/course/1">
+                  <Button variant="secondary" className="w-full">
+                    Start Practice
+                  </Button>
+                </Link>
               </CardContent>
             </Card>
           </div>
