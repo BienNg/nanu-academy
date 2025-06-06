@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { Play, BookOpen, Brain, Lock, CheckCircle, Star, ArrowLeft } from 'lucide-react';
+import { Play, BookOpen, Brain, Lock, CheckCircle, Star, ArrowLeft, Home, Award, Flame, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
@@ -12,7 +12,7 @@ import QuizComponent from '@/components/QuizComponent';
 const Course = () => {
   const { courseId } = useParams();
   const [currentSection, setCurrentSection] = useState<'overview' | 'video' | 'flashcards' | 'quiz'>('overview');
-  const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set(['lesson-1']));
+  const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set(['lesson-1', 'lesson-2', 'lesson-3']));
 
   // Sample course data
   const course = {
@@ -27,21 +27,23 @@ const Course = () => {
   const lessons = [
     {
       id: 'lesson-1',
-      title: 'Introduction to German',
+      title: 'Hello & Greetings',
       type: 'video' as const,
       duration: '10 min',
       completed: true,
       locked: false,
-      description: 'Basic greetings and pronunciation'
+      xp: 15,
+      position: 'left'
     },
     {
       id: 'lesson-2',
-      title: 'Basic Vocabulary',
+      title: 'Basic Words',
       type: 'flashcards' as const,
       duration: '15 min',
       completed: true,
       locked: false,
-      description: 'Essential words for daily conversation'
+      xp: 20,
+      position: 'right'
     },
     {
       id: 'lesson-3',
@@ -50,16 +52,18 @@ const Course = () => {
       duration: '5 min',
       completed: true,
       locked: false,
-      description: 'Practice der, die, das'
+      xp: 25,
+      position: 'left'
     },
     {
       id: 'lesson-4',
       title: 'Common Phrases',
       type: 'video' as const,
       duration: '12 min',
-      completed: true,
+      completed: false,
       locked: false,
-      description: 'Useful expressions for beginners'
+      xp: 30,
+      position: 'center'
     },
     {
       id: 'lesson-5',
@@ -67,8 +71,9 @@ const Course = () => {
       type: 'flashcards' as const,
       duration: '10 min',
       completed: false,
-      locked: false,
-      description: 'Learn numbers 1-100 and color vocabulary'
+      locked: true,
+      xp: 25,
+      position: 'right'
     },
     {
       id: 'lesson-6',
@@ -77,7 +82,19 @@ const Course = () => {
       duration: '8 min',
       completed: false,
       locked: true,
-      description: 'Present tense verb conjugation'
+      xp: 35,
+      position: 'left'
+    },
+    {
+      id: 'lesson-7',
+      title: 'Checkpoint',
+      type: 'quiz' as const,
+      duration: '15 min',
+      completed: false,
+      locked: true,
+      xp: 50,
+      position: 'center',
+      isCheckpoint: true
     }
   ];
 
@@ -140,6 +157,21 @@ const Course = () => {
     }
   };
 
+  const getNodeColor = (lesson: any) => {
+    if (lesson.locked) return 'bg-gray-300 border-gray-400';
+    if (completedLessons.has(lesson.id)) return 'bg-green-500 border-green-600 shadow-green-200';
+    return 'bg-blue-500 border-blue-600 shadow-blue-200';
+  };
+
+  const getNodePosition = (position: string) => {
+    switch (position) {
+      case 'left': return 'ml-8';
+      case 'right': return 'ml-auto mr-8';
+      case 'center': return 'mx-auto';
+      default: return 'mx-auto';
+    }
+  };
+
   const renderContent = () => {
     switch (currentSection) {
       case 'video':
@@ -198,9 +230,9 @@ const Course = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 via-green-50 to-yellow-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
@@ -208,180 +240,149 @@ const Course = () => {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 All Courses
               </Button>
-              <h1 className="text-2xl font-bold text-gray-900">{course.title}</h1>
+              <h1 className="text-xl font-bold text-gray-900">{course.title}</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-600">
-                {course.completedCount}/{course.totalLessons} lessons completed
+              <div className="flex items-center space-x-2 bg-orange-100 px-3 py-1 rounded-full">
+                <Flame className="h-4 w-4 text-orange-600" />
+                <span className="text-orange-600 font-semibold">7</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-blue-100 px-3 py-1 rounded-full">
+                <Award className="h-4 w-4 text-blue-600" />
+                <span className="text-blue-600 font-semibold">500</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-red-100 px-3 py-1 rounded-full">
+                <span className="text-red-600 font-semibold">❤️ 5</span>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Course Info */}
-          <div className="lg:col-span-2">
-            <Card className="mb-8">
-              <CardHeader>
-                <CardTitle>Course Overview</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-gray-600 mb-6">{course.description}</p>
-                <div className="space-y-4">
-                  <div className="flex justify-between text-sm">
-                    <span>Progress</span>
-                    <span>{course.progress}%</span>
-                  </div>
-                  <Progress value={course.progress} className="h-3" />
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Lessons */}
-            <div className="space-y-4">
-              <h3 className="text-xl font-semibold">Lessons</h3>
-              {lessons.map((lesson, index) => {
-                const Icon = getIcon(lesson.type);
-                const isCompleted = completedLessons.has(lesson.id);
-                
-                return (
-                  <Card 
-                    key={lesson.id}
-                    className={`transition-all duration-200 ${
-                      lesson.locked 
-                        ? 'opacity-60 cursor-not-allowed' 
-                        : 'hover:shadow-md cursor-pointer'
-                    } ${isCompleted ? 'bg-green-50 border-green-200' : ''}`}
-                    onClick={() => startLesson(lesson)}
-                  >
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className={`p-3 rounded-full ${
-                            lesson.locked 
-                              ? 'bg-gray-200' 
-                              : lesson.type === 'video' 
-                                ? 'bg-blue-100' 
-                                : lesson.type === 'flashcards'
-                                  ? 'bg-purple-100'
-                                  : 'bg-orange-100'
-                          }`}>
-                            {lesson.locked ? (
-                              <Lock className="h-5 w-5 text-gray-500" />
-                            ) : (
-                              <Icon className={`h-5 w-5 ${
-                                lesson.type === 'video' 
-                                  ? 'text-blue-600' 
-                                  : lesson.type === 'flashcards'
-                                    ? 'text-purple-600'
-                                    : 'text-orange-600'
-                              }`} />
-                            )}
-                          </div>
-                          <div>
-                            <div className="flex items-center space-x-2">
-                              <h4 className="font-semibold">{lesson.title}</h4>
-                              {isCompleted && (
-                                <CheckCircle className="h-5 w-5 text-green-500" />
-                              )}
-                            </div>
-                            <p className="text-sm text-gray-600">{lesson.description}</p>
-                            <div className="flex items-center space-x-4 mt-1">
-                              <span className="text-xs text-gray-500">{lesson.duration}</span>
-                              <span className={`text-xs px-2 py-1 rounded-full ${
-                                lesson.type === 'video' 
-                                  ? 'bg-blue-100 text-blue-700' 
-                                  : lesson.type === 'flashcards'
-                                    ? 'bg-purple-100 text-purple-700'
-                                    : 'bg-orange-100 text-orange-700'
-                              }`}>
-                                {lesson.type === 'flashcards' ? 'Flash Cards' : 
-                                 lesson.type === 'video' ? 'Video' : 'Quiz'}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        <div className="text-2xl">
-                          {index + 1}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+      {/* Course Header Section */}
+      <div className="bg-gradient-to-r from-green-500 to-teal-500 text-white py-6">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <div className="inline-flex items-center bg-white/20 rounded-full px-4 py-2 mb-4">
+            <span className="text-sm font-medium">SECTION 2, UNIT 1</span>
+            <span className="ml-2">▼</span>
           </div>
+          <h2 className="text-2xl font-bold mb-2">Check and Mate</h2>
+          <div className="w-full max-w-md mx-auto bg-white/20 rounded-full h-3">
+            <div 
+              className="bg-white h-3 rounded-full transition-all duration-300"
+              style={{ width: `${course.progress}%` }}
+            />
+          </div>
+        </div>
+      </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Course Stats */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <Star className="h-5 w-5 mr-2 text-yellow-500" />
-                  Your Progress
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="text-center">
-                    <div className="text-3xl font-bold text-blue-600 mb-1">
-                      {course.completedCount}
-                    </div>
-                    <p className="text-sm text-gray-600">lessons completed</p>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600 mb-1">
-                      {course.progress}%
-                    </div>
-                    <p className="text-sm text-gray-600">course progress</p>
-                  </div>
+      {/* Learning Map */}
+      <div className="max-w-md mx-auto px-4 py-8 relative">
+        {/* Path Line */}
+        <div className="absolute left-1/2 transform -translate-x-0.5 w-1 bg-gray-300 h-full"></div>
+        
+        <div className="space-y-16 relative z-10">
+          {lessons.map((lesson, index) => {
+            const Icon = getIcon(lesson.type);
+            const isCompleted = completedLessons.has(lesson.id);
+            const nodeColor = getNodeColor(lesson);
+            const positionClass = getNodePosition(lesson.position);
+            
+            return (
+              <div key={lesson.id} className={`relative ${positionClass}`}>
+                {/* Lesson Node */}
+                <div 
+                  className={`
+                    w-20 h-20 rounded-full border-4 flex items-center justify-center
+                    cursor-pointer transition-all duration-300 hover:scale-110
+                    ${nodeColor} shadow-lg
+                    ${lesson.locked ? 'cursor-not-allowed' : 'hover:shadow-xl'}
+                    ${lesson.isCheckpoint ? 'w-24 h-24 border-8' : ''}
+                  `}
+                  onClick={() => startLesson(lesson)}
+                >
+                  {lesson.locked ? (
+                    <Lock className="h-8 w-8 text-white" />
+                  ) : lesson.isCheckpoint ? (
+                    <Crown className="h-10 w-10 text-white" />
+                  ) : isCompleted ? (
+                    <Star className="h-8 w-8 text-white fill-current" />
+                  ) : (
+                    <Icon className="h-8 w-8 text-white" />
+                  )}
                 </div>
-              </CardContent>
-            </Card>
 
-            {/* Next Lesson */}
-            <Card className="bg-gradient-to-br from-blue-500 to-purple-600 text-white">
-              <CardContent className="p-6">
-                <h3 className="font-bold mb-2">Continue Learning</h3>
-                <p className="text-sm mb-4 text-blue-100">
-                  Keep up the momentum with your next lesson
-                </p>
-                <Button 
-                  className="w-full bg-white text-blue-600 hover:bg-gray-100"
-                  onClick={() => startLesson(lessons[4])}
-                >
-                  Start Next Lesson
-                </Button>
-              </CardContent>
-            </Card>
+                {/* Lesson Info Card */}
+                {lesson.position !== 'center' && (
+                  <div className={`
+                    absolute top-1/2 transform -translate-y-1/2
+                    ${lesson.position === 'left' ? 'left-24' : 'right-24'}
+                    w-48
+                  `}>
+                    <Card className={`
+                      ${lesson.locked ? 'opacity-60' : 'hover:shadow-lg cursor-pointer'}
+                      transition-all duration-200
+                    `}>
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-2">
+                          <h4 className="font-semibold text-sm">{lesson.title}</h4>
+                          {isCompleted && (
+                            <CheckCircle className="h-5 w-5 text-green-500" />
+                          )}
+                        </div>
+                        <div className="flex items-center justify-between text-xs text-gray-500">
+                          <span>{lesson.duration}</span>
+                          <span className="text-yellow-600 font-medium">+{lesson.xp} XP</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
 
-            {/* Course Tools */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Learning Tools</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => setCurrentSection('flashcards')}
-                >
-                  <BookOpen className="h-4 w-4 mr-2" />
-                  Practice Flashcards
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => setCurrentSection('quiz')}
-                >
-                  <Brain className="h-4 w-4 mr-2" />
-                  Take Practice Quiz
-                </Button>
-              </CardContent>
-            </Card>
+                {/* Center lesson title */}
+                {lesson.position === 'center' && (
+                  <div className="mt-4 text-center">
+                    <h4 className="font-bold text-gray-800">{lesson.title}</h4>
+                    <p className="text-sm text-gray-600">{lesson.duration} • +{lesson.xp} XP</p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Mascot Character */}
+        <div className="absolute bottom-20 right-4">
+          <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
+            <span className="text-3xl">🦜</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
+        <div className="max-w-md mx-auto px-4 py-3">
+          <div className="flex justify-around">
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <Home className="h-5 w-5 text-blue-500" />
+              <span className="text-xs mt-1 text-blue-500">Learn</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <BookOpen className="h-5 w-5 text-gray-400" />
+              <span className="text-xs mt-1 text-gray-400">Practice</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <Award className="h-5 w-5 text-gray-400" />
+              <span className="text-xs mt-1 text-gray-400">Leaderboard</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <span className="text-lg">📊</span>
+              <span className="text-xs mt-1 text-gray-400">Profile</span>
+            </Button>
+            <Button variant="ghost" size="sm" className="flex flex-col items-center">
+              <span className="text-lg">💬</span>
+              <span className="text-xs mt-1 text-gray-400">More</span>
+            </Button>
           </div>
         </div>
       </div>
