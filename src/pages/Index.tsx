@@ -4,7 +4,7 @@ import { Play, BookOpen, Trophy, Star, ChevronRight, Settings } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { courses } from '@/mockData/courses/courses';
+import { courseData } from '@/mockData/courses/courseStructure';
 
 const Index = () => {
   const [currentStreak, setCurrentStreak] = useState(7);
@@ -53,7 +53,7 @@ const Index = () => {
             <div className="bg-gradient-to-r from-blue-500 to-green-500 rounded-2xl p-6 text-white">
               <h2 className="text-3xl font-bold mb-2">Welcome back!</h2>
               <p className="text-blue-100 mb-4">Ready to continue your German learning journey?</p>
-              <Link to={`/course/${Object.values(courses)[0]?.course_id}`}>
+              <Link to={`/course/${courseData.id}`}>
                 <Button className="bg-white text-blue-600 hover:bg-gray-100">
                   <Play className="h-4 w-4 mr-2" />
                   Continue Learning
@@ -65,38 +65,36 @@ const Index = () => {
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Your Courses</h3>
               <div className="grid gap-6">
-                {Object.values(courses).map((course) => (
-                  <Card key={course.course_id} className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer">
-                    <CardContent className="p-6">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                          <div className="text-4xl">🇩🇪</div>
-                          <div className="flex-1">
-                            <h4 className="text-xl font-semibold text-gray-900">{course.course_name}</h4>
-                            <p className="text-gray-600 mb-3">{course.description}</p>
-                            <div className="flex items-center space-x-4">
-                              <div className="flex-1">
-                                <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                  <span>{course.completed_count}/{course.total_lessons} lessons</span>
-                                  <span>{course.progress}%</span>
-                                </div>
-                                <Progress value={course.progress} className="h-2" />
+                <Card key={courseData.id} className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer">
+                  <CardContent className="p-6">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <div className="text-4xl">🇩🇪</div>
+                        <div className="flex-1">
+                          <h4 className="text-xl font-semibold text-gray-900">{courseData.title}</h4>
+                          <p className="text-gray-600 mb-3">{courseData.description}</p>
+                          <div className="flex items-center space-x-4">
+                            <div className="flex-1">
+                              <div className="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>{courseData.completedStages}/{courseData.totalStages} stages</span>
+                                <span>{courseData.progress}%</span>
                               </div>
+                              <Progress value={courseData.progress} className="h-2" />
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Link to={`/course/${course.course_id}`}>
-                            <Button>
-                              Continue
-                              <ChevronRight className="h-4 w-4 ml-1" />
-                            </Button>
-                          </Link>
-                        </div>
                       </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      <div className="flex items-center space-x-2">
+                        <Link to={`/course/${courseData.id}`}>
+                          <Button>
+                            Continue
+                            <ChevronRight className="h-4 w-4 ml-1" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </div>
             </div>
           </div>
@@ -151,7 +149,7 @@ const Index = () => {
                 <BookOpen className="h-8 w-8 mx-auto mb-4" />
                 <h3 className="font-bold mb-2">Quick Practice</h3>
                 <p className="text-sm mb-4 text-purple-100">Review your vocab with flashcards</p>
-                <Link to={`/course/${Object.values(courses)[0]?.course_id}`}>
+                <Link to={`/course/${courseData.id}`}>
                   <Button variant="secondary" className="w-full">
                     Start Practice
                   </Button>

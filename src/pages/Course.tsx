@@ -269,33 +269,38 @@ const Course = () => {
                         const typeColor = getTypeColor(lesson.type);
                         
                         return (
-                          <div key={lesson.id} className="flex items-center justify-center">
-                            {/* Lesson Icon */}
-                            <div className="flex justify-center">
-                              <div
-                                onClick={() => startLesson(lesson)}
-                                className={`
-                                  w-16 h-16 rounded-full border-4 flex items-center justify-center
-                                  cursor-pointer transition-all duration-300 transform hover:scale-110
-                                  shadow-lg relative z-20
-                                  ${lesson.locked ? 'bg-gray-300 border-gray-400 cursor-not-allowed' : 
-                                    lesson.completed ? 'bg-green-500 border-green-600' : 'bg-blue-500 border-blue-600'}
-                                `}
-                              >
-                                {lesson.locked ? (
-                                  <Lock className="h-6 w-6 text-white" />
-                                ) : lesson.completed ? (
-                                  <Star className="h-6 w-6 text-white fill-current" />
-                                ) : (
-                                  <Icon className="h-6 w-6 text-white" />
-                                )}
+                          <div key={lesson.id} className="relative py-8">
+                            {/* Lesson Icon - Centered */}
+                            <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
+                              <div className="flex justify-center">
+                                <div
+                                  onClick={() => startLesson(lesson)}
+                                  className={`
+                                    w-16 h-16 rounded-full border-4 flex items-center justify-center
+                                    cursor-pointer transition-all duration-300 transform hover:scale-110
+                                    shadow-lg relative z-20
+                                    ${lesson.locked ? 'bg-gray-300 border-gray-400 cursor-not-allowed' : 
+                                      lesson.completed ? 'bg-green-500 border-green-600' : 'bg-blue-500 border-blue-600'}
+                                  `}
+                                >
+                                  {lesson.locked ? (
+                                    <Lock className="h-6 w-6 text-white" />
+                                  ) : lesson.completed ? (
+                                    <Star className="h-6 w-6 text-white fill-current" />
+                                  ) : (
+                                    <Icon className="h-6 w-6 text-white" />
+                                  )}
+                                </div>
                               </div>
                             </div>
 
-                            {/* Lesson Card */}
+                            {/* Lesson Card - Alternating Left/Right */}
                             <div 
                               className={`
-                                ml-8 p-4 rounded-xl border transition-all duration-200 cursor-pointer flex-1 max-w-md
+                                p-4 rounded-xl border transition-all duration-200 cursor-pointer
+                                max-w-xs /* Narrower card */
+                                absolute top-1/2 transform -translate-y-1/2 z-10 /* Positioned & layered */
+                                ${lessonIndex % 2 === 0 ? 'left-[calc(50%+3rem)]' : 'right-[calc(50%+3rem)]'} /* Snake pattern positioning */
                                 ${lesson.locked ? 'cursor-not-allowed bg-gray-50' : 
                                   lesson.completed ? 'bg-green-50 border-green-200 hover:bg-green-100' : 
                                   'bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md'}

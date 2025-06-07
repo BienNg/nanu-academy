@@ -38,7 +38,7 @@ export interface CourseStructure {
 
 export const courseData: CourseStructure = {
   id: "course_001",
-  title: "German Basics",
+  title: "Deutsch A1.1",
   description: "Master the fundamentals of German language",
   progress: 35,
   totalStages: 5,
