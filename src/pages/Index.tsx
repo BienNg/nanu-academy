@@ -4,33 +4,11 @@ import { Play, BookOpen, Trophy, Star, ChevronRight, Settings } from 'lucide-rea
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { courses } from '@/mockData/courses/courses';
 
 const Index = () => {
   const [currentStreak, setCurrentStreak] = useState(7);
   const [totalXP, setTotalXP] = useState(1250);
-
-  const courses = [
-    {
-      id: 1,
-      title: "German Basics",
-      description: "Learn fundamental German vocabulary and grammar",
-      progress: 65,
-      totalLessons: 20,
-      completedLessons: 13,
-      thumbnail: "🇩🇪",
-      isUnlocked: true
-    },
-    {
-      id: 2,
-      title: "German Intermediate",
-      description: "Advance your German skills with complex sentences",
-      progress: 0,
-      totalLessons: 25,
-      completedLessons: 0,
-      thumbnail: "📚",
-      isUnlocked: false
-    }
-  ];
 
   const recentActivity = [
     { lesson: "Articles: der, die, das", xp: 50, completed: true },
@@ -75,7 +53,7 @@ const Index = () => {
             <div className="bg-gradient-to-r from-blue-500 to-green-500 rounded-2xl p-6 text-white">
               <h2 className="text-3xl font-bold mb-2">Welcome back!</h2>
               <p className="text-blue-100 mb-4">Ready to continue your German learning journey?</p>
-              <Link to="/course/1">
+              <Link to={`/course/${Object.values(courses)[0]?.course_id}`}>
                 <Button className="bg-white text-blue-600 hover:bg-gray-100">
                   <Play className="h-4 w-4 mr-2" />
                   Continue Learning
@@ -87,19 +65,19 @@ const Index = () => {
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-6">Your Courses</h3>
               <div className="grid gap-6">
-                {courses.map((course) => (
-                  <Card key={course.id} className={`transition-all duration-300 hover:shadow-lg hover:scale-[1.02] ${!course.isUnlocked ? 'opacity-60' : 'cursor-pointer'}`}>
+                {Object.values(courses).map((course) => (
+                  <Card key={course.course_id} className="transition-all duration-300 hover:shadow-lg hover:scale-[1.02] cursor-pointer">
                     <CardContent className="p-6">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
-                          <div className="text-4xl">{course.thumbnail}</div>
+                          <div className="text-4xl">🇩🇪</div>
                           <div className="flex-1">
-                            <h4 className="text-xl font-semibold text-gray-900">{course.title}</h4>
+                            <h4 className="text-xl font-semibold text-gray-900">{course.course_name}</h4>
                             <p className="text-gray-600 mb-3">{course.description}</p>
                             <div className="flex items-center space-x-4">
                               <div className="flex-1">
                                 <div className="flex justify-between text-sm text-gray-600 mb-1">
-                                  <span>{course.completedLessons}/{course.totalLessons} lessons</span>
+                                  <span>{course.completed_count}/{course.total_lessons} lessons</span>
                                   <span>{course.progress}%</span>
                                 </div>
                                 <Progress value={course.progress} className="h-2" />
@@ -108,16 +86,12 @@ const Index = () => {
                           </div>
                         </div>
                         <div className="flex items-center space-x-2">
-                          {course.isUnlocked ? (
-                            <Link to={`/course/${course.id}`}>
-                              <Button>
-                                Continue
-                                <ChevronRight className="h-4 w-4 ml-1" />
-                              </Button>
-                            </Link>
-                          ) : (
-                            <div className="text-gray-400 text-sm">🔒 Complete previous course</div>
-                          )}
+                          <Link to={`/course/${course.course_id}`}>
+                            <Button>
+                              Continue
+                              <ChevronRight className="h-4 w-4 ml-1" />
+                            </Button>
+                          </Link>
                         </div>
                       </div>
                     </CardContent>
@@ -153,11 +127,7 @@ const Index = () => {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {[
-                    { lesson: "Articles: der, die, das", xp: 50, completed: true },
-                    { lesson: "Common Verbs", xp: 45, completed: true },
-                    { lesson: "Family Vocabulary", xp: 60, completed: false }
-                  ].map((activity, index) => (
+                  {recentActivity.map((activity, index) => (
                     <div key={index} className="flex items-center justify-between">
                       <div className="flex items-center space-x-3">
                         <div className={`w-3 h-3 rounded-full ${activity.completed ? 'bg-green-500' : 'bg-gray-300'}`}></div>
@@ -181,7 +151,7 @@ const Index = () => {
                 <BookOpen className="h-8 w-8 mx-auto mb-4" />
                 <h3 className="font-bold mb-2">Quick Practice</h3>
                 <p className="text-sm mb-4 text-purple-100">Review your vocab with flashcards</p>
-                <Link to="/course/1">
+                <Link to={`/course/${Object.values(courses)[0]?.course_id}`}>
                   <Button variant="secondary" className="w-full">
                     Start Practice
                   </Button>
