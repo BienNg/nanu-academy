@@ -230,85 +230,48 @@ const Course = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          
-          {/* Left Sidebar - Stage Progress */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-32">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Course Stages</h3>
-              <div className="space-y-4">
-                {courseData.stages.map((stage, index) => (
-                  <div key={stage.id} className="flex items-center space-x-3">
-                    <div className={`
-                      w-8 h-8 rounded-full border-2 flex items-center justify-center text-xs font-bold
-                      ${stage.locked ? 'bg-gray-300 border-gray-400 text-gray-600' : 
-                        stage.completed ? 'bg-green-500 border-green-600 text-white' : 'bg-blue-500 border-blue-600 text-white'}
-                    `}>
-                      {stage.locked ? <Lock className="h-3 w-3" /> : stage.stageNumber}
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-sm font-medium text-gray-900">{stage.title}</div>
-                      <div className="text-xs text-gray-500">{Math.round(stage.progress)}% complete</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
+        <div className="grid">
           {/* Center - Vertical Course Map */}
-          <div className="lg:col-span-3">
-            <div className="relative">
+          <div>
+            <div className="relative flex flex-col items-center">
               {/* Vertical Path Line */}
-              <div className="absolute left-20 top-0 bottom-0 w-1 bg-gray-200" />
+              <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gray-200 transform -translate-x-1/2" />
               
               {/* Stages and Lessons */}
-              <div className="space-y-16 relative z-10">
+              <div className="space-y-16 relative z-10 w-full max-w-2xl">
                 {courseData.stages.map((stage, stageIndex) => (
                   <div key={stage.id} className="space-y-8">
                     {/* Stage Checkpoint */}
-                    <div className="flex items-center">
-                      <div className="w-20 flex justify-center">
-                        <div className="bg-white rounded-2xl shadow-lg px-4 py-3 border-4 border-gray-200 relative z-20">
-                          <div className="flex items-center justify-center">
-                            <div className={`
-                              w-12 h-12 rounded-full border-4 flex items-center justify-center
-                              ${stage.locked ? 'bg-gray-300 border-gray-400' : 
-                                stage.completed ? 'bg-green-500 border-green-600' : 'bg-blue-500 border-blue-600'}
-                            `}>
-                              {stage.locked ? (
-                                <Lock className="h-6 w-6 text-white" />
-                              ) : stage.completed ? (
-                                <Crown className="h-6 w-6 text-white" />
-                              ) : (
-                                <span className="text-white text-lg font-bold">{stage.stageNumber}</span>
-                              )}
-                            </div>
+                    <div className="flex justify-center">
+                      <div className="bg-white rounded-2xl shadow-lg px-4 py-3 border-4 border-gray-200 relative z-20">
+                        <div className="flex items-center justify-center">
+                          <div className={`
+                            w-12 h-12 rounded-full border-4 flex items-center justify-center
+                            ${stage.locked ? 'bg-gray-300 border-gray-400' : 
+                              stage.completed ? 'bg-green-500 border-green-600' : 'bg-blue-500 border-blue-600'}
+                          `}>
+                            {stage.locked ? (
+                              <Lock className="h-6 w-6 text-white" />
+                            ) : stage.completed ? (
+                              <Crown className="h-6 w-6 text-white" />
+                            ) : (
+                              <span className="text-white text-lg font-bold">{stage.stageNumber}</span>
+                            )}
                           </div>
-                        </div>
-                      </div>
-                      <div className="ml-8 bg-white rounded-xl shadow-md p-4 flex-1">
-                        <h3 className="font-bold text-gray-900">Stage {stage.stageNumber}</h3>
-                        <p className="text-sm text-gray-600">{stage.title}</p>
-                        <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                          <div 
-                            className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${stage.progress}%` }}
-                          />
                         </div>
                       </div>
                     </div>
 
                     {/* Stage Lessons - Each with its own card */}
-                    <div className="space-y-6 ml-4">
+                    <div className="space-y-6">
                       {stage.lessons.map((lesson, lessonIndex) => {
                         const Icon = getIcon(lesson.type);
                         const typeColor = getTypeColor(lesson.type);
                         
                         return (
-                          <div key={lesson.id} className="flex items-center">
+                          <div key={lesson.id} className="flex items-center justify-center">
                             {/* Lesson Icon */}
-                            <div className="w-16 flex justify-center">
+                            <div className="flex justify-center">
                               <div
                                 onClick={() => startLesson(lesson)}
                                 className={`
