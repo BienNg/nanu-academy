@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Play, BookOpen, Brain, Lock, CheckCircle, Star, ArrowLeft, Home, Award, Flame, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,13 +9,14 @@ import FlashCard from '@/components/FlashCard';
 import QuizComponent from '@/components/QuizComponent';
 
 const Course = () => {
-  const { courseId } = useParams();
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState<'overview' | 'video' | 'flashcards' | 'quiz'>('overview');
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set(['lesson-1', 'lesson-2', 'lesson-3']));
 
   // Sample course data
   const course = {
-    id: courseId,
+    id: id,
     title: "German Basics",
     description: "Master the fundamentals of German language",
     progress: 35,
@@ -235,7 +236,12 @@ const Course = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
-              <Button variant="ghost" size="sm" className="mr-4">
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="mr-4"
+                onClick={() => navigate('/')}
+              >
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 All Courses
               </Button>
