@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Award, Flame, Play, BookOpen, Brain, Lock, CheckCircle, Star, Clock, BarChart3, MessageCircle, Trophy, Users } from 'lucide-react';
+import { ArrowLeft, Award, Flame, Play, BookOpen, Brain, Lock, CheckCircle, Star, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
 import VideoPlayer from '@/components/VideoPlayer';
 import FlashCard from '@/components/FlashCard';
 import QuizComponent from '@/components/QuizComponent';
@@ -43,6 +42,9 @@ const Course = () => {
     }
   ];
 
+  // Flatten all lessons from all stages for the vertical map
+  const allLessons = courseData.stages.flatMap(stage => stage.lessons);
+
   const startLesson = (lesson: CourseLesson) => {
     if (lesson.locked) return;
     
@@ -80,8 +82,18 @@ const Course = () => {
 
   const getLessonColor = (lesson: CourseLesson) => {
     if (lesson.locked) return 'bg-gray-300 border-gray-400';
-    if (lesson.completed) return 'bg-green-500 border-green-600 shadow-lg shadow-green-200';
-    return 'bg-blue-500 border-blue-600 shadow-lg shadow-blue-200';
+    if (lesson.completed) return 'bg-green-500 border-green-600';
+    return 'bg-blue-500 border-blue-600';
+  };
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'video': return 'bg-red-100 text-red-700';
+      case 'vocab': return 'bg-blue-100 text-blue-700';
+      case 'flashcards': return 'bg-green-100 text-green-700';
+      case 'exercises': return 'bg-purple-100 text-purple-700';
+      default: return 'bg-gray-100 text-gray-700';
+    }
   };
 
   const renderContent = () => {
@@ -164,7 +176,7 @@ const Course = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+      <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
@@ -196,48 +208,28 @@ const Course = () => {
         </div>
       </div>
 
-      {/* Stage Header Section */}
-      <div className="bg-gradient-to-r from-green-400 to-green-600 text-white py-8">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <div className="inline-flex items-center bg-white/20 rounded-full px-4 py-2 mb-4">
-            <span className="text-sm font-medium">SECTION 2, UNIT 1 ▼</span>
-          </div>
-          <h2 className="text-3xl font-bold mb-4">Check and Mate</h2>
-          
-          {/* Overall Course Progress */}
-          <div className="max-w-md mx-auto">
-            <div className="w-full bg-white/20 rounded-full h-3">
-              <div 
-                className="bg-white h-3 rounded-full transition-all duration-300"
-                style={{ width: `${courseData.progress}%` }}
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Course Map */}
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="relative">
-          {/* Vertical connecting lines */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gray-200 transform -translate-x-1/2" />
-          
-          {/* Lessons */}
-          <div className="space-y-8">
-            {courseData.stages.map((stage) =>
-              stage.lessons.map((lesson, lessonIndex) => {
+      {/* Main Content - Split Layout */}
+      <div className="flex">
+        {/* Left Side - Vertical Lesson Path */}
+        <div className="flex-1 relative">
+          <div className="max-w-md mx-auto py-16 px-8">
+            {/* Vertical Path Line */}
+            <div className="absolute left-1/2 top-16 bottom-16 w-1 bg-gray-200 transform -translate-x-1/2" />
+            
+            {/* Lessons */}
+            <div className="space-y-16 relative z-10">
+              {allLessons.map((lesson, index) => {
                 const Icon = getIcon(lesson.type);
                 const lessonColor = getLessonColor(lesson);
                 
                 return (
-                  <div key={lesson.id} className="relative flex items-center justify-center">
-                    {/* Lesson Node */}
+                  <div key={lesson.id} className="flex justify-center">
                     <div
                       onClick={() => startLesson(lesson)}
                       className={`
-                        relative w-20 h-20 rounded-full border-4 flex items-center justify-center
+                        w-20 h-20 rounded-full border-4 flex items-center justify-center
                         cursor-pointer transition-all duration-300 transform hover:scale-110
-                        ${lessonColor} z-10
+                        ${lessonColor} z-10 shadow-lg
                         ${lesson.locked ? 'cursor-not-allowed' : ''}
                       `}
                     >
@@ -249,67 +241,67 @@ const Course = () => {
                         <Icon className="h-8 w-8 text-white" />
                       )}
                     </div>
-
-                    {/* Lesson Info Card */}
-                    <div className={`
-                      absolute left-full ml-6 bg-white rounded-xl shadow-lg p-4 min-w-[300px]
-                      ${lessonIndex % 2 === 1 ? 'left-auto right-full mr-6' : ''}
-                    `}>
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-bold text-gray-900">{lesson.title}</h3>
-                        {lesson.completed && (
-                          <CheckCircle className="h-5 w-5 text-green-500" />
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center text-sm text-gray-600 mb-2">
-                        <Clock className="h-4 w-4 mr-1" />
-                        <span>{lesson.duration}</span>
-                        <span className="ml-4 text-yellow-600 font-medium">+{lesson.xp} XP</span>
-                      </div>
-
-                      {/* Exercise Levels (if applicable) */}
-                      {lesson.type === 'exercises' && lesson.exerciseLevels && (
-                        <div className="flex space-x-2 mt-3">
-                          {lesson.exerciseLevels.map((level) => (
-                            <div
-                              key={level.level}
-                              className={`
-                                w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
-                                ${level.completed ? 'bg-green-500 text-white' : 
-                                  level.locked ? 'bg-gray-300 text-gray-500' : 'bg-blue-500 text-white'}
-                              `}
-                            >
-                              {level.level}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Lesson Type Badge */}
-                      <div className={`
-                        inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2
-                        ${lesson.type === 'video' ? 'bg-red-100 text-red-700' :
-                          lesson.type === 'vocab' ? 'bg-blue-100 text-blue-700' :
-                          lesson.type === 'flashcards' ? 'bg-green-100 text-green-700' :
-                          'bg-purple-100 text-purple-700'}
-                      `}>
-                        {lesson.type.charAt(0).toUpperCase() + lesson.type.slice(1)}
-                      </div>
-                    </div>
-
-                    {/* Arrow pointing to lesson info */}
-                    <div className={`
-                      absolute w-0 h-0 z-20
-                      ${lessonIndex % 2 === 1 
-                        ? 'right-full mr-6 border-l-8 border-l-white border-t-8 border-t-transparent border-b-8 border-b-transparent'
-                        : 'left-full ml-6 border-r-8 border-r-white border-t-8 border-t-transparent border-b-8 border-b-transparent'
-                      }
-                    `} />
                   </div>
                 );
-              })
-            )}
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Side - Lesson Details */}
+        <div className="w-96 bg-white border-l border-gray-200 p-6 overflow-y-auto">
+          <div className="space-y-4">
+            {allLessons.map((lesson) => {
+              const typeColor = getTypeColor(lesson.type);
+              
+              return (
+                <div 
+                  key={lesson.id} 
+                  className={`
+                    p-4 rounded-lg border transition-all duration-200 cursor-pointer
+                    ${lesson.locked ? 'opacity-50 cursor-not-allowed bg-gray-50' : 
+                      lesson.completed ? 'bg-green-50 border-green-200 hover:bg-green-100' : 
+                      'bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md'}
+                  `}
+                  onClick={() => !lesson.locked && startLesson(lesson)}
+                >
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="font-semibold text-gray-900 text-sm leading-tight">{lesson.title}</h3>
+                    {lesson.completed && (
+                      <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 ml-2" />
+                    )}
+                  </div>
+                  
+                  <div className="flex items-center text-xs text-gray-600 mb-2">
+                    <Clock className="h-3 w-3 mr-1" />
+                    <span>{lesson.duration}</span>
+                    <span className="ml-4 text-yellow-600 font-medium">+{lesson.xp} XP</span>
+                  </div>
+
+                  <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${typeColor}`}>
+                    {lesson.type.charAt(0).toUpperCase() + lesson.type.slice(1)}
+                  </div>
+
+                  {/* Exercise Levels for exercises */}
+                  {lesson.type === 'exercises' && lesson.exerciseLevels && (
+                    <div className="mt-3 flex space-x-2">
+                      {lesson.exerciseLevels.map((level) => (
+                        <div
+                          key={level.level}
+                          className={`
+                            w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+                            ${level.completed ? 'bg-green-500 text-white' : 
+                              level.locked ? 'bg-gray-300 text-gray-500' : 'bg-blue-500 text-white'}
+                          `}
+                        >
+                          {level.level}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -318,24 +310,22 @@ const Course = () => {
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
         <div className="max-w-md mx-auto px-4 py-2">
           <div className="flex justify-around items-center">
-            <div className="flex flex-col items-center text-gray-600">
+            <div className="flex flex-col items-center text-blue-600">
               <BookOpen className="h-5 w-5 mb-1" />
-              <span className="text-xs">Learn</span>
+              <span className="text-xs font-medium">Learn</span>
             </div>
             <div className="flex flex-col items-center text-gray-600">
               <Brain className="h-5 w-5 mb-1" />
               <span className="text-xs">Practice</span>
             </div>
             <div className="flex flex-col items-center text-gray-600">
-              <BarChart3 className="h-5 w-5 mb-1" />
+              <Award className="h-5 w-5 mb-1" />
               <span className="text-xs">Leaderboard</span>
             </div>
             <div className="flex flex-col items-center text-gray-600">
-              <Users className="h-5 w-5 mb-1" />
               <span className="text-xs">Profile</span>
             </div>
             <div className="flex flex-col items-center text-gray-600">
-              <MessageCircle className="h-5 w-5 mb-1" />
               <span className="text-xs">More</span>
             </div>
           </div>
