@@ -1,0 +1,309 @@
+# Language Learning App System Architecture
+
+## Overview
+
+This is a comprehensive language learning platform with a hierarchical course structure, multiple content types, gamification elements, and a sophisticated exercise system with adaptive difficulty levels. The system serves both end users (learners) and administrators (content creators).
+
+## Core System Architecture
+
+### Database Schema
+
+The system requires a relational database with the following key entities:
+
+**Courses Table**
+
+- course_id (primary key)
+- course_name (e.g., "A1.1", "A1.2", "B1.1")
+- course_description
+- course_order
+- (published or unpublished)
+
+**Stages Table**
+
+- stage_id (primary key)
+- course_id (foreign key)
+- stage_number (1-20)
+- stage_name
+- stage_order
+
+**Course Content Table**
+
+- content_id (primary key)
+- stage_id (foreign key)
+- content_type (VIDEO, VOCAB_LIST, FLASHCARD, EXERCISE)
+- content_order
+- points_first_completion
+- points_repeat_completion
+- max_daily_repeats
+- lives_count (for applicable types)
+
+**Exercise Types Table**
+
+- exercise_type_id (primary key)
+- exercise_name
+- difficulty_level (1-4)
+- exercise_category
+
+**Exercise Content Table**
+
+- exercise_content_id (primary key)
+- content_id (foreign key)
+- exercise_type_id (foreign key)
+- question_data (JSON)
+- correct_answer
+- options (JSON for multiple choice)
+- audio_file_path
+- category
+
+**User Progress Table**
+
+- user_id
+- content_id
+- completion_count
+- daily_completion_count
+- last_completion_date
+- current_lives
+- total_points_earned
+
+## Content Type Implementation
+
+### 1. Video Course Content Type
+
+**Functionality:**
+
+- Streams video content to users (this is simply by providing a google drive url where the video is already uploaded)
+- Tracks completion status by user clicking on completed
+- Awards 20 points upon first completion
+- No repeat completion points
+
+**Implementation Requirements:**
+
+- One-time point award system
+- Progress persistence
+
+### 2. Vocabulary List Course Content Type
+
+**Functionality:**
+
+- Displays vocabulary lists for review
+- No point system
+- Simple completion tracking
+
+**Implementation Requirements:**
+
+- Clean vocabulary display interface
+- Mark as reviewed/completed functionality
+- No gamification elements needed
+
+### 3. Flashcard Course Content Type
+
+**Functionality:**
+
+- Interactive flashcard system with lives mechanism
+- 5 lives per session
+- Complex scoring system based on performance and repetition
+- This should work like Anki App
+
+**Scoring Logic:**
+
+- First completion: 15 points
+- Subsequent completions: 3 points each
+- Failed completion (lost all 5 lives): 0 points
+- Maximum 2 repeat completions with points per day
+
+**Lives System Implementation:**
+
+- Start each session with 5 lives
+- Lose 1 life per incorrect answer
+- Session ends when lives reach 0
+- Reset lives for new sessions
+
+**Daily Limit Tracking:**
+
+- Track completion count per day per user
+- Reset daily counters at midnight
+- Enforce 2-completion limit for point awards
+
+### 4. Exercise Course Content Type
+
+**Functionality:**
+
+- Most complex content type with multiple sub-exercise types
+- Lives system similar to flashcards
+- 4-level difficulty progression system
+- Random exercise selection per session
+
+**Core Mechanics:**
+
+- 5 lives per session
+- Session termination upon losing all lives
+- First completion: 20 points
+- Repeat completions: 5 points each
+- Maximum 2 repeat completions with points per day
+
+## Exercise Difficulty System
+
+### Level 1 Exercises (Beginner)
+
+**Word Translation Multiple Choice:**
+
+- Present German word, user selects Vietnamese translation
+- All options must be from same semantic category
+- 4 multiple choice options
+
+**Word Listening Comprehension Multiple Choice:**
+
+- Play audio of German word
+- User selects correct Vietnamese translation from 4 options
+- Audio quality must be clear and consistent
+
+### Level 2 Exercises (Elementary)
+
+**Word Translation Typing:**
+
+- Display Vietnamese word
+- User types German translation
+- Implement fuzzy matching for minor spelling errors
+
+**Word Listening Comprehension Typing:**
+
+- Play audio of German word
+- User types Vietnamese translation
+- Include audio replay functionality
+
+**Fill-in-the-Blank Choice:**
+
+- Present sentence with missing word/phrase
+- User selects from multiple choice options
+- Context-appropriate options only
+
+### Level 3 Exercises (Intermediate)
+
+**Matching Exercises:**
+
+- Connect German words with Vietnamese translations
+- Connect images with vocabulary words
+- Connect audio clips with written text
+- Drag-and-drop or tap-to-connect interface
+
+**Fill-in-the-Blank Typing:**
+
+- Present sentence with missing word/phrase
+- User types the missing content
+- Support for multiple correct answers
+
+### Level 4 Exercises (Advanced)
+
+**Phrase Translation:**
+
+- Display Vietnamese phrase
+- Provide pool of German words (current + previous lessons)
+- User taps words in correct order to form German translation
+- Duolingo-style word bank interface
+- Shuffle word options to prevent pattern memorization
+
+## Random Exercise Selection Algorithm
+
+### Session Generation Logic:
+
+```
+1. Determine user's current difficulty level for the "Exercise Course" Content Type
+2. Query all available exercises for that difficulty level
+3. Filter exercises based on content from current and previous lessons
+4. Randomly select exercises ensuring variety:
+   - No duplicate exercise types in same session
+   - Balanced distribution across available categories
+   - Minimum session length requirements
+5. Generate session with selected exercises
+6. Track completion and adjust difficulty if needed
+
+```
+
+### Difficulty Progression:
+
+- Users start at Level 1 for each new stage
+- Advance to next level after consistent success (e.g., 3 consecutive completions)
+- Maintain level history per user per stage
+- Allow manual admin override for testing
+
+## Admin Content Management System
+
+### Content Creation Interface:
+
+**Course Management:**
+
+- Create/edit course hierarchies (A1.1, A1.2, etc.)
+- Define stage structures (1-20 stages per course)
+- Set content order and dependencies
+
+**Exercise Content Creation:**
+
+- Form-based exercise creation for each type
+- Bulk import capabilities for vocabulary
+- Audio file upload and management
+- Category tagging system
+- Preview functionality before publishing
+
+**Content Validation:**
+
+- Ensure all required fields are completed
+- Validate audio file formats and quality
+- Check answer correctness
+- Verify category consistency
+
+### Analytics Dashboard:
+
+- User progress tracking across all content types
+- Exercise performance metrics
+- Difficulty level distribution
+- Completion rates by content type
+- Daily active users and engagement metrics
+
+## User Interface Requirements
+
+### Progress Tracking:
+
+- Visual progress bars for stages and courses
+- Points accumulation display
+- Lives remaining indicator during exercises
+- Daily completion counter
+- Achievement badges for milestones
+
+### Session Management:
+
+- Clear session start/end boundaries
+- Lives counter prominently displayed
+- Progress saving for interrupted sessions
+- Retry mechanisms with daily limits
+
+### Responsive Design:
+
+- Mobile-first approach
+- Touch-friendly interfaces for matching and word selection
+- Audio controls with clear visual feedback
+- Accessibility compliance for screen readers
+
+## Technical Implementation Considerations
+
+### Performance Optimization:
+
+- Lazy loading for video content
+- Audio file compression and caching
+- Database indexing for rapid exercise retrieval
+- Session state management for interrupted sessions
+
+### Data Integrity:
+
+- Transaction management for point awards
+- Concurrent user session handling
+- Daily counter reset automation
+- Backup and recovery procedures
+
+### Security:
+
+- User authentication and authorization
+- Admin role-based access control
+- API rate limiting to prevent cheating
+- Secure audio file serving
+
+This comprehensive system provides a structured, gamified learning experience while giving administrators full control over content creation and user progress monitoring. The random exercise selection ensures varied, engaging sessions while the difficulty progression maintains appropriate challenge levels for learners.

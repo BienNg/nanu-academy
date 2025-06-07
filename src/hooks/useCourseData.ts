@@ -1,60 +1,59 @@
-
 import { useState } from 'react';
 import { Course } from '@/types/course';
 
 export const useCourseData = () => {
   const [courses] = useState<Course[]>([
     {
-      id: '1',
-      title: 'German Basics',
-      description: 'Learn fundamental German vocabulary and grammar',
-      students: 1234,
-      lessons: 24,
-      flashcards: 156,
-      exercises: 48,
+      id: 'a1-1',
+      title: 'German A1.1',
+      description: 'Start your German journey with essential vocabulary, basic greetings, and fundamental grammar concepts. Perfect for absolute beginners.',
+      students: 234,
+      lessons: 20,
+      flashcards: 200,
+      exercises: 100,
       status: 'published',
       lastUpdated: '2 days ago',
-      completion: 85,
+      completion: 100,
       rating: 4.8
     },
     {
-      id: '2',
-      title: 'Spanish Conversations',
-      description: 'Practice everyday Spanish conversations',
-      students: 892,
-      lessons: 18,
-      flashcards: 124,
-      exercises: 32,
+      id: 'a1-2',
+      title: 'German A1.2',
+      description: 'Build on your basic German skills with expanded vocabulary, daily conversations, and essential grammar patterns.',
+      students: 156,
+      lessons: 20,
+      flashcards: 250,
+      exercises: 120,
       status: 'published',
       lastUpdated: '1 week ago',
-      completion: 92,
-      rating: 4.9
-    },
-    {
-      id: '3',
-      title: 'French Grammar Mastery',
-      description: 'Master complex French grammar rules',
-      students: 567,
-      lessons: 32,
-      flashcards: 203,
-      exercises: 67,
-      status: 'draft',
-      lastUpdated: '3 days ago',
-      completion: 45,
-      rating: 4.6
-    },
-    {
-      id: '4',
-      title: 'Italian Culture & Language',
-      description: 'Explore Italian culture through language learning',
-      students: 345,
-      lessons: 16,
-      flashcards: 89,
-      exercises: 28,
-      status: 'published',
-      lastUpdated: '5 days ago',
-      completion: 78,
+      completion: 100,
       rating: 4.7
+    },
+    {
+      id: 'b1-1',
+      title: 'German B1.1',
+      description: 'Advance your German proficiency with complex grammar structures, business vocabulary, and intermediate conversation skills.',
+      students: 89,
+      lessons: 20,
+      flashcards: 300,
+      exercises: 150,
+      status: 'draft',
+      lastUpdated: '1 day ago',
+      completion: 45,
+      rating: 0
+    },
+    {
+      id: 'b1-2',
+      title: 'German B1.2',
+      description: 'Master advanced German concepts with focus on fluency, professional communication, and cultural understanding.',
+      students: 0,
+      lessons: 20,
+      flashcards: 280,
+      exercises: 140,
+      status: 'draft',
+      lastUpdated: 'Just now',
+      completion: 15,
+      rating: 0
     }
   ]);
 
