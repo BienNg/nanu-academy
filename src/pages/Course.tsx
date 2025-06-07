@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Award, Flame } from 'lucide-react';
+import { ArrowLeft, Award, Flame, Play, BookOpen, Brain, Lock, CheckCircle, Star, Clock, BarChart3, MessageCircle, Trophy, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import VideoPlayer from '@/components/VideoPlayer';
 import FlashCard from '@/components/FlashCard';
 import QuizComponent from '@/components/QuizComponent';
@@ -65,6 +66,22 @@ const Course = () => {
   const completeLesson = () => {
     setCurrentSection('overview');
     setCurrentLesson(null);
+  };
+
+  const getIcon = (type: string) => {
+    switch (type) {
+      case 'video': return Play;
+      case 'vocab': return BookOpen;
+      case 'flashcards': return Star;
+      case 'exercises': return Brain;
+      default: return Play;
+    }
+  };
+
+  const getLessonColor = (lesson: CourseLesson) => {
+    if (lesson.locked) return 'bg-gray-300 border-gray-400';
+    if (lesson.completed) return 'bg-green-500 border-green-600 shadow-lg shadow-green-200';
+    return 'bg-blue-500 border-blue-600 shadow-lg shadow-blue-200';
   };
 
   const renderContent = () => {
@@ -144,11 +161,8 @@ const Course = () => {
     );
   }
 
-  // Flatten all lessons from all stages for the map display
-  const allLessons = courseData.stages.flatMap(stage => stage.lessons);
-
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 via-green-50 to-yellow-50">
+    <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white shadow-sm border-b sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -182,24 +196,19 @@ const Course = () => {
         </div>
       </div>
 
-      {/* Course Progress Header */}
-      <div className="bg-gradient-to-r from-green-500 to-teal-500 text-white py-8">
-        <div className="max-w-6xl mx-auto px-4 text-center">
+      {/* Stage Header Section */}
+      <div className="bg-gradient-to-r from-green-400 to-green-600 text-white py-8">
+        <div className="max-w-4xl mx-auto px-4 text-center">
           <div className="inline-flex items-center bg-white/20 rounded-full px-4 py-2 mb-4">
-            <span className="text-sm font-medium">COURSE OVERVIEW</span>
+            <span className="text-sm font-medium">SECTION 2, UNIT 1 ▼</span>
           </div>
-          <h2 className="text-3xl font-bold mb-4">{courseData.title}</h2>
-          <p className="text-lg text-green-100 mb-6">{courseData.description}</p>
+          <h2 className="text-3xl font-bold mb-4">Check and Mate</h2>
           
-          {/* Course Progress */}
+          {/* Overall Course Progress */}
           <div className="max-w-md mx-auto">
-            <div className="flex justify-between text-sm mb-2">
-              <span>Progress: {courseData.completedStages}/{courseData.totalStages} stages</span>
-              <span>{courseData.progress}%</span>
-            </div>
-            <div className="w-full bg-white/20 rounded-full h-4">
+            <div className="w-full bg-white/20 rounded-full h-3">
               <div 
-                className="bg-white h-4 rounded-full transition-all duration-300"
+                className="bg-white h-3 rounded-full transition-all duration-300"
                 style={{ width: `${courseData.progress}%` }}
               />
             </div>
@@ -208,143 +217,127 @@ const Course = () => {
       </div>
 
       {/* Course Map */}
-      <div className="max-w-6xl mx-auto px-4 py-12">
+      <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="relative">
-          {/* Path line connecting lessons */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
-            <defs>
-              <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" style={{ stopColor: '#10B981', stopOpacity: 0.8 }} />
-                <stop offset="50%" style={{ stopColor: '#3B82F6', stopOpacity: 0.8 }} />
-                <stop offset="100%" style={{ stopColor: '#8B5CF6', stopOpacity: 0.8 }} />
-              </linearGradient>
-            </defs>
-            {allLessons.map((_, index) => {
-              if (index === allLessons.length - 1) return null;
-              
-              const startX = (index % 4) * 280 + 140;
-              const startY = Math.floor(index / 4) * 300 + 150;
-              const endX = ((index + 1) % 4) * 280 + 140;
-              const endY = Math.floor((index + 1) / 4) * 300 + 150;
-              
-              return (
-                <line
-                  key={`path-${index}`}
-                  x1={startX}
-                  y1={startY}
-                  x2={endX}
-                  y2={endY}
-                  stroke="url(#pathGradient)"
-                  strokeWidth="4"
-                  strokeDasharray={allLessons[index + 1].locked ? "10,5" : "none"}
-                />
-              );
-            })}
-          </svg>
+          {/* Vertical connecting lines */}
+          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gray-200 transform -translate-x-1/2" />
+          
+          {/* Lessons */}
+          <div className="space-y-8">
+            {courseData.stages.map((stage) =>
+              stage.lessons.map((lesson, lessonIndex) => {
+                const Icon = getIcon(lesson.type);
+                const lessonColor = getLessonColor(lesson);
+                
+                return (
+                  <div key={lesson.id} className="relative flex items-center justify-center">
+                    {/* Lesson Node */}
+                    <div
+                      onClick={() => startLesson(lesson)}
+                      className={`
+                        relative w-20 h-20 rounded-full border-4 flex items-center justify-center
+                        cursor-pointer transition-all duration-300 transform hover:scale-110
+                        ${lessonColor} z-10
+                        ${lesson.locked ? 'cursor-not-allowed' : ''}
+                      `}
+                    >
+                      {lesson.locked ? (
+                        <Lock className="h-8 w-8 text-white" />
+                      ) : lesson.completed ? (
+                        <Star className="h-8 w-8 text-white fill-current" />
+                      ) : (
+                        <Icon className="h-8 w-8 text-white" />
+                      )}
+                    </div>
 
-          {/* Lesson nodes */}
-          <div className="relative grid grid-cols-4 gap-8" style={{ zIndex: 2 }}>
-            {allLessons.map((lesson, index) => {
-              const stageIndex = Math.floor(index / 4);
-              const lessonInStage = index % 4;
-              const stage = courseData.stages[stageIndex];
-              
-              return (
-                <div key={lesson.id} className="flex flex-col items-center">
-                  {/* Stage header (shown only for first lesson of each stage) */}
-                  {lessonInStage === 0 && (
-                    <div className="mb-6 text-center">
-                      <div className="inline-flex items-center bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
-                        Stage {stage.stageNumber}: {stage.title}
+                    {/* Lesson Info Card */}
+                    <div className={`
+                      absolute left-full ml-6 bg-white rounded-xl shadow-lg p-4 min-w-[300px]
+                      ${lessonIndex % 2 === 1 ? 'left-auto right-full mr-6' : ''}
+                    `}>
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-bold text-gray-900">{lesson.title}</h3>
+                        {lesson.completed && (
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                        )}
                       </div>
-                      <div className="mt-2 text-sm text-gray-600">{stage.description}</div>
-                      <div className="mt-2">
-                        <div className="w-48 bg-gray-200 rounded-full h-2 mx-auto">
-                          <div 
-                            className="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${stage.progress}%` }}
-                          />
+                      
+                      <div className="flex items-center text-sm text-gray-600 mb-2">
+                        <Clock className="h-4 w-4 mr-1" />
+                        <span>{lesson.duration}</span>
+                        <span className="ml-4 text-yellow-600 font-medium">+{lesson.xp} XP</span>
+                      </div>
+
+                      {/* Exercise Levels (if applicable) */}
+                      {lesson.type === 'exercises' && lesson.exerciseLevels && (
+                        <div className="flex space-x-2 mt-3">
+                          {lesson.exerciseLevels.map((level) => (
+                            <div
+                              key={level.level}
+                              className={`
+                                w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
+                                ${level.completed ? 'bg-green-500 text-white' : 
+                                  level.locked ? 'bg-gray-300 text-gray-500' : 'bg-blue-500 text-white'}
+                              `}
+                            >
+                              {level.level}
+                            </div>
+                          ))}
                         </div>
-                        <div className="text-xs text-gray-500 mt-1">{Math.round(stage.progress)}% complete</div>
+                      )}
+
+                      {/* Lesson Type Badge */}
+                      <div className={`
+                        inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-2
+                        ${lesson.type === 'video' ? 'bg-red-100 text-red-700' :
+                          lesson.type === 'vocab' ? 'bg-blue-100 text-blue-700' :
+                          lesson.type === 'flashcards' ? 'bg-green-100 text-green-700' :
+                          'bg-purple-100 text-purple-700'}
+                      `}>
+                        {lesson.type.charAt(0).toUpperCase() + lesson.type.slice(1)}
                       </div>
                     </div>
-                  )}
-                  
-                  {/* Lesson node */}
-                  <div
-                    onClick={() => startLesson(lesson)}
-                    className={`
-                      relative w-32 h-32 rounded-full border-4 flex flex-col items-center justify-center
-                      cursor-pointer transition-all duration-300 transform hover:scale-110 shadow-lg
-                      ${lesson.locked 
-                        ? 'bg-gray-300 border-gray-400 cursor-not-allowed' 
-                        : lesson.completed 
-                          ? 'bg-gradient-to-br from-green-400 to-green-600 border-green-500 shadow-green-200' 
-                          : 'bg-gradient-to-br from-blue-400 to-blue-600 border-blue-500 shadow-blue-200'
+
+                    {/* Arrow pointing to lesson info */}
+                    <div className={`
+                      absolute w-0 h-0 z-20
+                      ${lessonIndex % 2 === 1 
+                        ? 'right-full mr-6 border-l-8 border-l-white border-t-8 border-t-transparent border-b-8 border-b-transparent'
+                        : 'left-full ml-6 border-r-8 border-r-white border-t-8 border-t-transparent border-b-8 border-b-transparent'
                       }
-                    `}
-                  >
-                    {/* Lesson type icon */}
-                    <div className="text-white text-2xl mb-1">
-                      {lesson.type === 'video' && '🎥'}
-                      {lesson.type === 'vocab' && '📚'}
-                      {lesson.type === 'flashcards' && '🃏'}
-                      {lesson.type === 'exercises' && '🧠'}
-                    </div>
-                    
-                    {/* XP badge */}
-                    <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
-                      +{lesson.xp}
-                    </div>
-                    
-                    {/* Completion indicator */}
-                    {lesson.completed && (
-                      <div className="absolute -bottom-2 bg-white rounded-full p-1">
-                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs">✓</span>
-                        </div>
-                      </div>
-                    )}
-                    
-                    {/* Lock indicator */}
-                    {lesson.locked && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-gray-600 text-2xl">🔒</span>
-                      </div>
-                    )}
+                    `} />
                   </div>
-                  
-                  {/* Lesson info */}
-                  <div className="mt-4 text-center max-w-36">
-                    <h3 className="font-semibold text-sm text-gray-900 mb-1">{lesson.title}</h3>
-                    <p className="text-xs text-gray-600 mb-2">{lesson.duration}</p>
-                    <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                      lesson.type === 'video' ? 'bg-red-100 text-red-700' :
-                      lesson.type === 'vocab' ? 'bg-blue-100 text-blue-700' :
-                      lesson.type === 'flashcards' ? 'bg-green-100 text-green-700' :
-                      'bg-purple-100 text-purple-700'
-                    }`}>
-                      {lesson.type.charAt(0).toUpperCase() + lesson.type.slice(1)}
-                    </div>
-                    
-                    {/* Exercise levels indicator */}
-                    {lesson.type === 'exercises' && lesson.exerciseLevels && (
-                      <div className="mt-2 flex justify-center space-x-1">
-                        {lesson.exerciseLevels.map((level) => (
-                          <div
-                            key={level.level}
-                            className={`w-2 h-2 rounded-full ${
-                              level.completed ? 'bg-green-500' : 
-                              level.locked ? 'bg-gray-300' : 'bg-blue-500'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Navigation */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+        <div className="max-w-md mx-auto px-4 py-2">
+          <div className="flex justify-around items-center">
+            <div className="flex flex-col items-center text-gray-600">
+              <BookOpen className="h-5 w-5 mb-1" />
+              <span className="text-xs">Learn</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-600">
+              <Brain className="h-5 w-5 mb-1" />
+              <span className="text-xs">Practice</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-600">
+              <BarChart3 className="h-5 w-5 mb-1" />
+              <span className="text-xs">Leaderboard</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-600">
+              <Users className="h-5 w-5 mb-1" />
+              <span className="text-xs">Profile</span>
+            </div>
+            <div className="flex flex-col items-center text-gray-600">
+              <MessageCircle className="h-5 w-5 mb-1" />
+              <span className="text-xs">More</span>
+            </div>
           </div>
         </div>
       </div>
