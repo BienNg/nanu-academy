@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { Play, BookOpen, Brain, Lock, CheckCircle, Star, ArrowLeft, Home, Award, Flame, Crown } from 'lucide-react';
@@ -355,34 +354,6 @@ const Course = () => {
         <div className="absolute bottom-20 right-4">
           <div className="w-24 h-24 bg-green-500 rounded-full flex items-center justify-center shadow-lg">
             <span className="text-3xl">🦜</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg">
-        <div className="max-w-md mx-auto px-4 py-3">
-          <div className="flex justify-around">
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <Home className="h-5 w-5 text-blue-500" />
-              <span className="text-xs mt-1 text-blue-500">Learn</span>
-            </Button>
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <BookOpen className="h-5 w-5 text-gray-400" />
-              <span className="text-xs mt-1 text-gray-400">Practice</span>
-            </Button>
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <Award className="h-5 w-5 text-gray-400" />
-              <span className="text-xs mt-1 text-gray-400">Leaderboard</span>
-            </Button>
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <span className="text-lg">📊</span>
-              <span className="text-xs mt-1 text-gray-400">Profile</span>
-            </Button>
-            <Button variant="ghost" size="sm" className="flex flex-col items-center">
-              <span className="text-lg">💬</span>
-              <span className="text-xs mt-1 text-gray-400">More</span>
-            </Button>
           </div>
         </div>
       </div>
