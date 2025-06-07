@@ -230,7 +230,7 @@ const Course = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           
           {/* Left Sidebar - Stage Progress */}
           <div className="lg:col-span-1">
@@ -257,69 +257,121 @@ const Course = () => {
           </div>
 
           {/* Center - Vertical Course Map */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <div className="relative">
               {/* Vertical Path Line */}
-              <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gray-200 transform -translate-x-1/2" />
+              <div className="absolute left-20 top-0 bottom-0 w-1 bg-gray-200" />
               
               {/* Stages and Lessons */}
               <div className="space-y-16 relative z-10">
                 {courseData.stages.map((stage, stageIndex) => (
                   <div key={stage.id} className="space-y-8">
                     {/* Stage Checkpoint */}
-                    <div className="flex justify-center">
-                      <div className="bg-white rounded-2xl shadow-lg px-6 py-4 border-4 border-gray-200">
-                        <div className="flex items-center space-x-4">
-                          <div className={`
-                            w-16 h-16 rounded-full border-4 flex items-center justify-center
-                            ${stage.locked ? 'bg-gray-300 border-gray-400' : 
-                              stage.completed ? 'bg-green-500 border-green-600' : 'bg-blue-500 border-blue-600'}
-                          `}>
-                            {stage.locked ? (
-                              <Lock className="h-8 w-8 text-white" />
-                            ) : stage.completed ? (
-                              <Crown className="h-8 w-8 text-white" />
-                            ) : (
-                              <span className="text-white text-xl font-bold">{stage.stageNumber}</span>
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="font-bold text-gray-900">Stage {stage.stageNumber}</h3>
-                            <p className="text-sm text-gray-600">{stage.title}</p>
-                            <div className="w-32 bg-gray-200 rounded-full h-2 mt-2">
-                              <div 
-                                className="bg-green-500 h-2 rounded-full transition-all duration-300"
-                                style={{ width: `${stage.progress}%` }}
-                              />
+                    <div className="flex items-center">
+                      <div className="w-20 flex justify-center">
+                        <div className="bg-white rounded-2xl shadow-lg px-4 py-3 border-4 border-gray-200 relative z-20">
+                          <div className="flex items-center justify-center">
+                            <div className={`
+                              w-12 h-12 rounded-full border-4 flex items-center justify-center
+                              ${stage.locked ? 'bg-gray-300 border-gray-400' : 
+                                stage.completed ? 'bg-green-500 border-green-600' : 'bg-blue-500 border-blue-600'}
+                            `}>
+                              {stage.locked ? (
+                                <Lock className="h-6 w-6 text-white" />
+                              ) : stage.completed ? (
+                                <Crown className="h-6 w-6 text-white" />
+                              ) : (
+                                <span className="text-white text-lg font-bold">{stage.stageNumber}</span>
+                              )}
                             </div>
                           </div>
                         </div>
                       </div>
+                      <div className="ml-8 bg-white rounded-xl shadow-md p-4 flex-1">
+                        <h3 className="font-bold text-gray-900">Stage {stage.stageNumber}</h3>
+                        <p className="text-sm text-gray-600">{stage.title}</p>
+                        <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                          <div 
+                            className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${stage.progress}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
 
-                    {/* Stage Lessons */}
-                    <div className="space-y-8">
+                    {/* Stage Lessons - Each with its own card */}
+                    <div className="space-y-6 ml-4">
                       {stage.lessons.map((lesson, lessonIndex) => {
                         const Icon = getIcon(lesson.type);
+                        const typeColor = getTypeColor(lesson.type);
                         
                         return (
-                          <div key={lesson.id} className="flex justify-center">
-                            <div
-                              onClick={() => startLesson(lesson)}
+                          <div key={lesson.id} className="flex items-center">
+                            {/* Lesson Icon */}
+                            <div className="w-16 flex justify-center">
+                              <div
+                                onClick={() => startLesson(lesson)}
+                                className={`
+                                  w-16 h-16 rounded-full border-4 flex items-center justify-center
+                                  cursor-pointer transition-all duration-300 transform hover:scale-110
+                                  shadow-lg relative z-20
+                                  ${lesson.locked ? 'bg-gray-300 border-gray-400 cursor-not-allowed' : 
+                                    lesson.completed ? 'bg-green-500 border-green-600' : 'bg-blue-500 border-blue-600'}
+                                `}
+                              >
+                                {lesson.locked ? (
+                                  <Lock className="h-6 w-6 text-white" />
+                                ) : lesson.completed ? (
+                                  <Star className="h-6 w-6 text-white fill-current" />
+                                ) : (
+                                  <Icon className="h-6 w-6 text-white" />
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Lesson Card */}
+                            <div 
                               className={`
-                                w-20 h-20 rounded-full border-4 flex items-center justify-center
-                                cursor-pointer transition-all duration-300 transform hover:scale-110
-                                shadow-lg z-10
-                                ${lesson.locked ? 'bg-gray-300 border-gray-400 cursor-not-allowed' : 
-                                  lesson.completed ? 'bg-green-500 border-green-600' : 'bg-blue-500 border-blue-600'}
+                                ml-8 p-4 rounded-xl border transition-all duration-200 cursor-pointer flex-1 max-w-md
+                                ${lesson.locked ? 'opacity-50 cursor-not-allowed bg-gray-50' : 
+                                  lesson.completed ? 'bg-green-50 border-green-200 hover:bg-green-100' : 
+                                  'bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md'}
                               `}
+                              onClick={() => !lesson.locked && startLesson(lesson)}
                             >
-                              {lesson.locked ? (
-                                <Lock className="h-8 w-8 text-white" />
-                              ) : lesson.completed ? (
-                                <Star className="h-8 w-8 text-white fill-current" />
-                              ) : (
-                                <Icon className="h-8 w-8 text-white" />
+                              <div className="flex items-start justify-between mb-2">
+                                <h4 className="font-semibold text-gray-900 text-sm leading-tight">{lesson.title}</h4>
+                                {lesson.completed && (
+                                  <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 ml-2" />
+                                )}
+                              </div>
+                              
+                              <div className="flex items-center text-xs text-gray-600 mb-2">
+                                <Clock className="h-3 w-3 mr-1" />
+                                <span>{lesson.duration}</span>
+                                <span className="ml-4 text-yellow-600 font-medium">+{lesson.xp} XP</span>
+                              </div>
+
+                              <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${typeColor}`}>
+                                {lesson.type.charAt(0).toUpperCase() + lesson.type.slice(1)}
+                              </div>
+
+                              {/* Exercise Levels for exercises */}
+                              {lesson.type === 'exercises' && lesson.exerciseLevels && (
+                                <div className="mt-3 flex space-x-2">
+                                  {lesson.exerciseLevels.map((level) => (
+                                    <div
+                                      key={level.level}
+                                      className={`
+                                        w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+                                        ${level.completed ? 'bg-green-500 text-white' : 
+                                          level.locked ? 'bg-gray-300 text-gray-500' : 'bg-blue-500 text-white'}
+                                      `}
+                                    >
+                                      {level.level}
+                                    </div>
+                                  ))}
+                                </div>
                               )}
                             </div>
                           </div>
@@ -328,66 +380,6 @@ const Course = () => {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right Sidebar - Lesson Details */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-2xl shadow-lg p-6 sticky top-32 max-h-[80vh] overflow-y-auto">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">Lessons</h3>
-              <div className="space-y-4">
-                {courseData.stages.flatMap(stage => stage.lessons).map((lesson) => {
-                  const typeColor = getTypeColor(lesson.type);
-                  
-                  return (
-                    <div 
-                      key={lesson.id} 
-                      className={`
-                        p-4 rounded-lg border transition-all duration-200 cursor-pointer
-                        ${lesson.locked ? 'opacity-50 cursor-not-allowed bg-gray-50' : 
-                          lesson.completed ? 'bg-green-50 border-green-200 hover:bg-green-100' : 
-                          'bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md'}
-                      `}
-                      onClick={() => !lesson.locked && startLesson(lesson)}
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <h4 className="font-semibold text-gray-900 text-sm leading-tight">{lesson.title}</h4>
-                        {lesson.completed && (
-                          <CheckCircle className="h-5 w-5 text-green-500 flex-shrink-0 ml-2" />
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center text-xs text-gray-600 mb-2">
-                        <Clock className="h-3 w-3 mr-1" />
-                        <span>{lesson.duration}</span>
-                        <span className="ml-4 text-yellow-600 font-medium">+{lesson.xp} XP</span>
-                      </div>
-
-                      <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${typeColor}`}>
-                        {lesson.type.charAt(0).toUpperCase() + lesson.type.slice(1)}
-                      </div>
-
-                      {/* Exercise Levels for exercises */}
-                      {lesson.type === 'exercises' && lesson.exerciseLevels && (
-                        <div className="mt-3 flex space-x-2">
-                          {lesson.exerciseLevels.map((level) => (
-                            <div
-                              key={level.level}
-                              className={`
-                                w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
-                                ${level.completed ? 'bg-green-500 text-white' : 
-                                  level.locked ? 'bg-gray-300 text-gray-500' : 'bg-blue-500 text-white'}
-                              `}
-                            >
-                              {level.level}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
               </div>
             </div>
           </div>
