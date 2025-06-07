@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Plus, Edit, Eye, Users, BookOpen, Clock, Trophy, Star } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -62,7 +61,7 @@ const CourseBuilderDashboard = () => {
       completion: 78,
       rating: 4.7
     }
-  ];
+  ]);
 
   const handleCreateCourse = () => {
     navigate('/admin/course-builder/new');
