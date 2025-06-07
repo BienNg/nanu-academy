@@ -39,7 +39,7 @@ const StageCard: React.FC<StageCardProps> = ({ stage, onLessonStart }) => {
   };
 
   return (
-    <Card className={`mb-8 ${stage.locked ? 'opacity-60' : ''} transition-all duration-200 hover:shadow-lg`}>
+    <Card className="mb-8 transition-all duration-200 hover:shadow-lg">
       <CardContent className="p-6">
         {/* Stage Header */}
         <div className="flex items-center justify-between mb-4">
@@ -86,7 +86,7 @@ const StageCard: React.FC<StageCardProps> = ({ stage, onLessonStart }) => {
                 key={lesson.id} 
                 className={`
                   transition-all duration-200 cursor-pointer hover:shadow-md
-                  ${lesson.locked ? 'opacity-60 cursor-not-allowed' : 'hover:scale-105'}
+                  ${lesson.locked ? 'cursor-not-allowed' : 'hover:scale-105'}
                 `}
                 onClick={() => !lesson.locked && onLessonStart(lesson)}
               >

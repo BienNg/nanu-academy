@@ -296,7 +296,7 @@ const Course = () => {
                             <div 
                               className={`
                                 ml-8 p-4 rounded-xl border transition-all duration-200 cursor-pointer flex-1 max-w-md
-                                ${lesson.locked ? 'opacity-50 cursor-not-allowed bg-gray-50' : 
+                                ${lesson.locked ? 'cursor-not-allowed bg-gray-50' : 
                                   lesson.completed ? 'bg-green-50 border-green-200 hover:bg-green-100' : 
                                   'bg-white border-gray-200 hover:bg-gray-50 hover:shadow-md'}
                               `}
