@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Award, Flame } from 'lucide-react';
@@ -6,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import VideoPlayer from '@/components/VideoPlayer';
 import FlashCard from '@/components/FlashCard';
 import QuizComponent from '@/components/QuizComponent';
-import StageCard from '@/components/StageCard';
 import { courseData, CourseLesson } from '@/mockData/courses/courseStructure';
 
 const Course = () => {
@@ -146,6 +144,9 @@ const Course = () => {
     );
   }
 
+  // Flatten all lessons from all stages for the map display
+  const allLessons = courseData.stages.flatMap(stage => stage.lessons);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 via-green-50 to-yellow-50">
       {/* Header */}
@@ -181,7 +182,7 @@ const Course = () => {
         </div>
       </div>
 
-      {/* Course Header Section */}
+      {/* Course Progress Header */}
       <div className="bg-gradient-to-r from-green-500 to-teal-500 text-white py-8">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <div className="inline-flex items-center bg-white/20 rounded-full px-4 py-2 mb-4">
@@ -206,22 +207,145 @@ const Course = () => {
         </div>
       </div>
 
-      {/* Course Content */}
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="mb-6">
-          <h3 className="text-2xl font-bold text-gray-900 mb-2">Course Stages</h3>
-          <p className="text-gray-600">Complete each stage to unlock the next. Each stage contains 4 structured lessons.</p>
-        </div>
+      {/* Course Map */}
+      <div className="max-w-6xl mx-auto px-4 py-12">
+        <div className="relative">
+          {/* Path line connecting lessons */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+            <defs>
+              <linearGradient id="pathGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style={{ stopColor: '#10B981', stopOpacity: 0.8 }} />
+                <stop offset="50%" style={{ stopColor: '#3B82F6', stopOpacity: 0.8 }} />
+                <stop offset="100%" style={{ stopColor: '#8B5CF6', stopOpacity: 0.8 }} />
+              </linearGradient>
+            </defs>
+            {allLessons.map((_, index) => {
+              if (index === allLessons.length - 1) return null;
+              
+              const startX = (index % 4) * 280 + 140;
+              const startY = Math.floor(index / 4) * 300 + 150;
+              const endX = ((index + 1) % 4) * 280 + 140;
+              const endY = Math.floor((index + 1) / 4) * 300 + 150;
+              
+              return (
+                <line
+                  key={`path-${index}`}
+                  x1={startX}
+                  y1={startY}
+                  x2={endX}
+                  y2={endY}
+                  stroke="url(#pathGradient)"
+                  strokeWidth="4"
+                  strokeDasharray={allLessons[index + 1].locked ? "10,5" : "none"}
+                />
+              );
+            })}
+          </svg>
 
-        {/* Stages */}
-        <div className="space-y-6">
-          {courseData.stages.map((stage) => (
-            <StageCard
-              key={stage.id}
-              stage={stage}
-              onLessonStart={startLesson}
-            />
-          ))}
+          {/* Lesson nodes */}
+          <div className="relative grid grid-cols-4 gap-8" style={{ zIndex: 2 }}>
+            {allLessons.map((lesson, index) => {
+              const stageIndex = Math.floor(index / 4);
+              const lessonInStage = index % 4;
+              const stage = courseData.stages[stageIndex];
+              
+              return (
+                <div key={lesson.id} className="flex flex-col items-center">
+                  {/* Stage header (shown only for first lesson of each stage) */}
+                  {lessonInStage === 0 && (
+                    <div className="mb-6 text-center">
+                      <div className="inline-flex items-center bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+                        Stage {stage.stageNumber}: {stage.title}
+                      </div>
+                      <div className="mt-2 text-sm text-gray-600">{stage.description}</div>
+                      <div className="mt-2">
+                        <div className="w-48 bg-gray-200 rounded-full h-2 mx-auto">
+                          <div 
+                            className="bg-gradient-to-r from-green-400 to-blue-500 h-2 rounded-full transition-all duration-300"
+                            style={{ width: `${stage.progress}%` }}
+                          />
+                        </div>
+                        <div className="text-xs text-gray-500 mt-1">{Math.round(stage.progress)}% complete</div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Lesson node */}
+                  <div
+                    onClick={() => startLesson(lesson)}
+                    className={`
+                      relative w-32 h-32 rounded-full border-4 flex flex-col items-center justify-center
+                      cursor-pointer transition-all duration-300 transform hover:scale-110 shadow-lg
+                      ${lesson.locked 
+                        ? 'bg-gray-300 border-gray-400 cursor-not-allowed' 
+                        : lesson.completed 
+                          ? 'bg-gradient-to-br from-green-400 to-green-600 border-green-500 shadow-green-200' 
+                          : 'bg-gradient-to-br from-blue-400 to-blue-600 border-blue-500 shadow-blue-200'
+                      }
+                    `}
+                  >
+                    {/* Lesson type icon */}
+                    <div className="text-white text-2xl mb-1">
+                      {lesson.type === 'video' && '🎥'}
+                      {lesson.type === 'vocab' && '📚'}
+                      {lesson.type === 'flashcards' && '🃏'}
+                      {lesson.type === 'exercises' && '🧠'}
+                    </div>
+                    
+                    {/* XP badge */}
+                    <div className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
+                      +{lesson.xp}
+                    </div>
+                    
+                    {/* Completion indicator */}
+                    {lesson.completed && (
+                      <div className="absolute -bottom-2 bg-white rounded-full p-1">
+                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">✓</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Lock indicator */}
+                    {lesson.locked && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-gray-600 text-2xl">🔒</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Lesson info */}
+                  <div className="mt-4 text-center max-w-36">
+                    <h3 className="font-semibold text-sm text-gray-900 mb-1">{lesson.title}</h3>
+                    <p className="text-xs text-gray-600 mb-2">{lesson.duration}</p>
+                    <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                      lesson.type === 'video' ? 'bg-red-100 text-red-700' :
+                      lesson.type === 'vocab' ? 'bg-blue-100 text-blue-700' :
+                      lesson.type === 'flashcards' ? 'bg-green-100 text-green-700' :
+                      'bg-purple-100 text-purple-700'
+                    }`}>
+                      {lesson.type.charAt(0).toUpperCase() + lesson.type.slice(1)}
+                    </div>
+                    
+                    {/* Exercise levels indicator */}
+                    {lesson.type === 'exercises' && lesson.exerciseLevels && (
+                      <div className="mt-2 flex justify-center space-x-1">
+                        {lesson.exerciseLevels.map((level) => (
+                          <div
+                            key={level.level}
+                            className={`w-2 h-2 rounded-full ${
+                              level.completed ? 'bg-green-500' : 
+                              level.locked ? 'bg-gray-300' : 'bg-blue-500'
+                            }`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
     </div>
