@@ -171,7 +171,7 @@ const Course = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 via-green-50 to-yellow-50">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b sticky top-0 z-10">
+      <div className="bg-white shadow-sm border-b sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
@@ -238,7 +238,7 @@ const Course = () => {
               <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gray-200 transform -translate-x-1/2" />
               
               {/* Stages and Lessons */}
-              <div className="space-y-16 relative z-10 w-full max-w-2xl">
+              <div className="space-y-16 relative w-full max-w-2xl">
                 {courseData.stages.map((stage, stageIndex) => (
                   <div key={stage.id} className="space-y-8">
                     {/* Stage Checkpoint */}
