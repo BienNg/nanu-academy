@@ -7,19 +7,26 @@ import VideoPlayer from '@/components/VideoPlayer';
 import FlashCard from '@/components/FlashCard';
 import QuizComponent from '@/components/QuizComponent';
 import { courseData, CourseLesson } from '@/mockData/courses/courseStructure';
+import { vocabulary } from '@/mockData/content/vocabulary';
 
 const Course = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState<'overview' | 'video' | 'flashcards' | 'quiz' | 'vocab'>('overview');
   const [currentLesson, setCurrentLesson] = useState<CourseLesson | null>(null);
+  const [currentStageId, setCurrentStageId] = useState<string>('');
 
-  const flashcardsData = [
-    { id: '1', german: 'Hallo', english: 'Hello', example: 'Hallo, wie geht es dir?' },
-    { id: '2', german: 'Danke', english: 'Thank you', example: 'Danke für deine Hilfe!' },
-    { id: '3', german: 'Bitte', english: 'Please/You\'re welcome', example: 'Bitte schön!' },
-    { id: '4', german: 'Entschuldigung', english: 'Excuse me', example: 'Entschuldigung, wo ist der Bahnhof?' }
-  ];
+  // Get vocabulary items for the current stage
+  const getStageVocabulary = (stageId: string) => {
+    return Object.values(vocabulary).filter(item => item.stage_id === stageId);
+  };
+
+  const flashcardsData = getStageVocabulary(currentStageId).map(item => ({
+    id: item.word_id,
+    german: item.german,
+    english: item.vietnamese,
+    example: '' // Example sentences could be added to the vocabulary data if needed
+  }));
 
   const quizData = [
     {
@@ -48,6 +55,15 @@ const Course = () => {
 
   const startLesson = (lesson: CourseLesson) => {
     if (lesson.locked) return;
+    
+    // Find the stage that contains this lesson
+    const stage = courseData.stages.find(stage => 
+      stage.lessons.some(l => l.id === lesson.id)
+    );
+    
+    if (stage) {
+      setCurrentStageId(stage.id);
+    }
     
     setCurrentLesson(lesson);
     switch (lesson.type) {
