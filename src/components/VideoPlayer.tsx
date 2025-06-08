@@ -34,7 +34,7 @@ const VideoPlayer = ({ title, description, videoUrl, onComplete }: VideoPlayerPr
   const embedUrl = getGoogleDriveEmbedUrl(videoUrl);
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-lg overflow-hidden max-w-4xl mx-auto">
       {/* Video Header */}
       <div className="p-6 border-b">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
