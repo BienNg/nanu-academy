@@ -6,16 +6,43 @@ import { Progress } from '@/components/ui/progress';
 import VideoPlayer from '@/components/VideoPlayer';
 import FlashCard from '@/components/FlashCard';
 import QuizComponent from '@/components/QuizComponent';
-import { courseData, CourseLesson } from '@/mockData/courses/courseStructure';
+import { allCourses, CourseLesson } from '@/mockData/courses/courseStructure';
 import { vocabulary } from '@/mockData/content/vocabulary';
 import { getQuizForStage } from '@/mockData/quizzes';
 
 const Course = () => {
-  const { id } = useParams();
+  const { courseId } = useParams();
   const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState<'overview' | 'video' | 'flashcards' | 'quiz' | 'vocab'>('overview');
   const [currentLesson, setCurrentLesson] = useState<CourseLesson | null>(null);
   const [currentStageId, setCurrentStageId] = useState<string>('');
+
+  // Debug: Log the ID and available courses
+  console.log('URL courseId:', courseId);
+  console.log('Available courses:', allCourses.map(c => ({ id: c.id, title: c.title })));
+
+  // Find the course by id from the URL
+  const course = allCourses.find(c => c.id === courseId);
+
+  // Fallback if course not found
+  if (!course) {
+    return (
+      <div className="p-8 text-center">
+        <div className="text-red-600 text-xl font-semibold mb-2">Course not found.</div>
+        <div className="text-gray-700">ID: {courseId || 'undefined'}</div>
+        <div className="mt-4">
+          <p className="font-medium mb-2">Available courses:</p>
+          <ul className="list-disc list-inside">
+            {allCourses.map(c => (
+              <li key={c.id}>
+                <span className="font-mono">{c.id}</span>: {c.title}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
+  }
 
   // Get vocabulary items for the current stage
   const getStageVocabulary = (stageId: string) => {
@@ -33,13 +60,13 @@ const Course = () => {
   const quizData = getQuizForStage(currentStageId);
 
   // Flatten all lessons from all stages for the vertical map
-  const allLessons = courseData.stages.flatMap(stage => stage.lessons);
+  const allLessons = course.stages.flatMap(stage => stage.lessons);
 
   const startLesson = (lesson: CourseLesson) => {
     if (lesson.locked) return;
     
     // Find the stage that contains this lesson
-    const stage = courseData.stages.find(stage => 
+    const stage = course.stages.find(stage => 
       stage.lessons.some(l => l.id === lesson.id)
     );
     
@@ -184,7 +211,7 @@ const Course = () => {
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 All Courses
               </Button>
-              <h1 className="text-xl font-bold text-gray-900">{courseData.title}</h1>
+              <h1 className="text-xl font-bold text-gray-900">{course.title}</h1>
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2 bg-orange-100 px-3 py-1 rounded-full">
@@ -209,19 +236,19 @@ const Course = () => {
           <div className="inline-flex items-center bg-white/20 rounded-full px-4 py-2 mb-4">
             <span className="text-sm font-medium">COURSE OVERVIEW</span>
           </div>
-          <h2 className="text-3xl font-bold mb-4">{courseData.title}</h2>
-          <p className="text-lg text-green-100 mb-6">{courseData.description}</p>
+          <h2 className="text-3xl font-bold mb-4">{course.title}</h2>
+          <p className="text-lg text-green-100 mb-6">{course.description}</p>
           
           {/* Overall Course Progress */}
           <div className="max-w-md mx-auto">
             <div className="flex justify-between text-sm mb-2">
-              <span>Progress: {courseData.completedStages}/{courseData.totalStages} stages</span>
-              <span>{courseData.progress}%</span>
+              <span>Progress: {course.completedStages}/{course.totalStages} stages</span>
+              <span>{course.progress}%</span>
             </div>
             <div className="w-full bg-white/20 rounded-full h-4">
               <div 
                 className="bg-white h-4 rounded-full transition-all duration-300"
-                style={{ width: `${courseData.progress}%` }}
+                style={{ width: `${course.progress}%` }}
               />
             </div>
           </div>
@@ -239,7 +266,7 @@ const Course = () => {
               
               {/* Stages and Lessons */}
               <div className="space-y-16 relative w-full max-w-2xl">
-                {courseData.stages.map((stage, stageIndex) => (
+                {course.stages.map((stage, stageIndex) => (
                   <div key={stage.id} className="space-y-8">
                     {/* Stage Checkpoint */}
                     <div className="flex justify-center">

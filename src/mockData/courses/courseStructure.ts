@@ -350,3 +350,345 @@ This lesson introduces you to the fundamental greetings and farewells in German,
     }
   ]
 };
+
+export const courseDataA1_2: CourseStructure = {
+  id: "course_002",
+  title: "Deutsch A1.2",
+  description: "Build on your German foundations with practical conversations",
+  progress: 0,
+  totalStages: 6,
+  completedStages: 0,
+  stages: [
+    {
+      id: "stage_006",
+      title: "Familie und Freunde",
+      description: "Family members, relationships, and personal information",
+      stageNumber: 1,
+      progress: 0,
+      locked: false,
+      completed: false,
+      lessons: [
+        {
+          id: "lesson_006_01",
+          title: "Video Lecture: Family Members",
+          type: "video",
+          duration: "13 min",
+          videoSummary: `**Lesson Overview:**\nLearn to talk about your family and relationships in German, mastering essential vocabulary and possessive pronouns.\n\n**What You'll Learn:**\n- **Family Vocabulary:**\n  - Core family terms: "die Familie" (family), "die Mutter/Mama" (mother), "der Vater/Papa" (father), "der Bruder" (brother), "die Schwester" (sister)\n  - Extended family: "die Großmutter/Oma" (grandmother), "der Großvater/Opa" (grandfather), "die Tante" (aunt), "der Onkel" (uncle)\n- **Possessive Pronouns:**\n  - Learn "mein/meine" (my), "dein/deine" (your), "sein/seine" (his), "ihr/ihre" (her) and their correct usage with family members\n- **Personal Information:**\n  - Practice stating ages, occupations, and relationships: "Mein Vater ist 45 Jahre alt" (My father is 45 years old)\n- **Cultural Insights:**\n  - German family traditions, typical family structures, and how Germans talk about family relationships\n- **Conversation Practice:**\n  - Role-play introducing family members and asking about others' families using natural dialogue patterns\n\n**Interactive Elements:**\n- Family tree exercises where you identify relationships and practice possessive pronouns\n- Listening comprehension with native speakers describing their families\n- Photo description activities using family vocabulary\n\n**By the End of This Lesson:**\nYou'll confidently describe your family, ask about others' relatives, and use possessive pronouns correctly in context.`,
+          completed: false,
+          locked: false,
+          xp: 18,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
+        },
+        {
+          id: "lesson_006_02",
+          title: "Vocab List: Family & Relationships",
+          type: "vocab",
+          duration: "7 min",
+          completed: false,
+          locked: true,
+          xp: 12
+        },
+        {
+          id: "lesson_006_03",
+          title: "Flash Cards: Family Members",
+          type: "flashcards",
+          duration: "16 min",
+          completed: false,
+          locked: true,
+          xp: 24
+        },
+        {
+          id: "lesson_006_04",
+          title: "Exercises: Family Descriptions",
+          type: "exercises",
+          duration: "28 min",
+          completed: false,
+          locked: true,
+          xp: 36,
+          exerciseLevels: [
+            { level: 1, title: "Family Tree Completion", completed: false, locked: true },
+            { level: 2, title: "Possessive Pronouns", completed: false, locked: true },
+            { level: 3, title: "Family Interviews", completed: false, locked: true },
+            { level: 4, title: "Personal Stories", completed: false, locked: true }
+          ]
+        }
+      ]
+    },
+    {
+      id: "stage_007",
+      title: "Hobbys und Freizeit",
+      description: "Hobbies, leisure activities, and expressing preferences",
+      stageNumber: 2,
+      progress: 0,
+      locked: true,
+      completed: false,
+      lessons: [
+        {
+          id: "lesson_007_01",
+          title: "Video Lecture: Hobbies & Activities",
+          type: "video",
+          duration: "15 min",
+          videoSummary: `This engaging lesson introduces you to talking about hobbies and free time activities in German. You'll learn essential vocabulary for popular pastimes including sports ("der Sport"), reading ("lesen"), music ("die Musik"), and outdoor activities. The instructor covers verb conjugations for hobby-related activities, focusing on regular and irregular verbs like "spielen" (to play), "gehen" (to go), and "machen" (to do/make). You'll master expressing preferences using "Ich mag..." (I like) and "Ich liebe..." (I love), as well as frequency expressions like "oft" (often), "manchmal" (sometimes), and "nie" (never). The lesson includes cultural segments about popular German leisure activities, seasonal sports, and how Germans typically spend their weekends. Practical dialogues demonstrate asking about and describing hobbies: "Was machst du gern in deiner Freizeit?" (What do you like to do in your free time?). Interactive elements include matching activities to seasons, expressing opinions about different hobbies, and building sentences about your weekly routine using time expressions and hobby vocabulary.`,
+          completed: false,
+          locked: true,
+          xp: 20,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
+        },
+        {
+          id: "lesson_007_02",
+          title: "Vocab List: Hobbies & Sports",
+          type: "vocab",
+          duration: "9 min",
+          completed: false,
+          locked: true,
+          xp: 14
+        },
+        {
+          id: "lesson_007_03",
+          title: "Flash Cards: Activity Practice",
+          type: "flashcards",
+          duration: "18 min",
+          completed: false,
+          locked: true,
+          xp: 26
+        },
+        {
+          id: "lesson_007_04",
+          title: "Exercises: Hobby Conversations",
+          type: "exercises",
+          duration: "32 min",
+          completed: false,
+          locked: true,
+          xp: 40,
+          exerciseLevels: [
+            { level: 1, title: "Activity Matching", completed: false, locked: true },
+            { level: 2, title: "Preference Expressions", completed: false, locked: true },
+            { level: 3, title: "Schedule Planning", completed: false, locked: true },
+            { level: 4, title: "Hobby Presentations", completed: false, locked: true }
+          ]
+        }
+      ]
+    },
+    {
+      id: "stage_008",
+      title: "Einkaufen und Kleidung",
+      description: "Shopping vocabulary, clothing items, and sizes",
+      stageNumber: 3,
+      progress: 0,
+      locked: true,
+      completed: false,
+      lessons: [
+        {
+          id: "lesson_008_01",
+          title: "Video Lecture: Shopping & Clothing",
+          type: "video",
+          duration: "17 min",
+          videoSummary: `This comprehensive shopping lesson equips you with essential vocabulary and phrases for clothing stores and general shopping in German-speaking countries. You'll learn clothing items from basics like "das T-Shirt," "die Hose" (pants), "der Rock" (skirt) to accessories like "die Schuhe" (shoes) and "die Tasche" (bag). The instructor covers size expressions, colors with clothing, and price discussions including "Wie viel kostet...?" (How much does... cost?) and "Das ist zu teuer" (That's too expensive). You'll master shopping phrases for asking for help: "Können Sie mir helfen?" (Can you help me?), trying things on: "Kann ich das anprobieren?" (Can I try this on?), and making purchases. Cultural notes highlight German shopping customs, typical store hours, and payment methods. The lesson includes role-play scenarios in clothing stores, department stores, and markets, with authentic dialogues between customers and salespeople. Interactive exercises feature virtual shopping experiences where you practice describing clothing preferences, asking about availability in different sizes, and negotiating prices at markets.`,
+          completed: false,
+          locked: true,
+          xp: 22,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
+        },
+        {
+          id: "lesson_008_02",
+          title: "Vocab List: Clothing & Shopping",
+          type: "vocab",
+          duration: "10 min",
+          completed: false,
+          locked: true,
+          xp: 15
+        },
+        {
+          id: "lesson_008_03",
+          title: "Flash Cards: Shopping Scenarios",
+          type: "flashcards",
+          duration: "20 min",
+          completed: false,
+          locked: true,
+          xp: 28
+        },
+        {
+          id: "lesson_008_04",
+          title: "Exercises: Store Interactions",
+          type: "exercises",
+          duration: "35 min",
+          completed: false,
+          locked: true,
+          xp: 45,
+          exerciseLevels: [
+            { level: 1, title: "Clothing Identification", completed: false, locked: true },
+            { level: 2, title: "Size & Color Practice", completed: false, locked: true },
+            { level: 3, title: "Shopping Dialogues", completed: false, locked: true },
+            { level: 4, title: "Market Negotiations", completed: false, locked: true }
+          ]
+        }
+      ]
+    },
+    {
+      id: "stage_009",
+      title: "Wohnen und Zuhause",
+      description: "Home, rooms, furniture, and living situations",
+      stageNumber: 4,
+      progress: 0,
+      locked: true,
+      completed: false,
+      lessons: [
+        {
+          id: "lesson_009_01",
+          title: "Video Lecture: Home & Living",
+          type: "video",
+          duration: "16 min",
+          videoSummary: `Explore German vocabulary for describing homes, apartments, and living situations in this detailed lesson. You'll learn room names including "das Wohnzimmer" (living room), "die Küche" (kitchen), "das Schlafzimmer" (bedroom), and "das Badezimmer" (bathroom), along with common furniture and household items. The instructor covers housing types from "die Wohnung" (apartment) to "das Haus" (house), and rental vocabulary including "die Miete" (rent) and "der Vermieter" (landlord). You'll master prepositions of location: "in," "auf," "unter," "neben" to describe where things are placed. The lesson includes essential phrases for describing your living situation, asking about apartments, and talking about household chores. Cultural segments explore typical German housing, living arrangements for students and families, and apartment hunting customs. Interactive elements include virtual house tours where you practice describing rooms and their contents, location exercises using prepositions, and role-plays for apartment viewings and describing your ideal home to others.`,
+          completed: false,
+          locked: true,
+          xp: 20,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
+        },
+        {
+          id: "lesson_009_02",
+          title: "Vocab List: Rooms & Furniture",
+          type: "vocab",
+          duration: "8 min",
+          completed: false,
+          locked: true,
+          xp: 13
+        },
+        {
+          id: "lesson_009_03",
+          title: "Flash Cards: Home Description",
+          type: "flashcards",
+          duration: "17 min",
+          completed: false,
+          locked: true,
+          xp: 25
+        },
+        {
+          id: "lesson_009_04",
+          title: "Exercises: Living Situations",
+          type: "exercises",
+          duration: "30 min",
+          completed: false,
+          locked: true,
+          xp: 42,
+          exerciseLevels: [
+            { level: 1, title: "Room Identification", completed: false, locked: true },
+            { level: 2, title: "Furniture Placement", completed: false, locked: true },
+            { level: 3, title: "Home Descriptions", completed: false, locked: true },
+            { level: 4, title: "Apartment Hunting", completed: false, locked: true }
+          ]
+        }
+      ]
+    },
+    {
+      id: "stage_010",
+      title: "Verkehrsmittel und Reisen",
+      description: "Transportation, travel, and giving directions",
+      stageNumber: 5,
+      progress: 0,
+      locked: true,
+      completed: false,
+      lessons: [
+        {
+          id: "lesson_010_01",
+          title: "Video Lecture: Transportation & Travel",
+          type: "video",
+          duration: "18 min",
+          videoSummary: `Master German transportation vocabulary and travel expressions in this comprehensive lesson covering everything from daily commuting to vacation planning. You'll learn transportation modes including "der Bus," "die Bahn/der Zug" (train), "das Auto," "das Fahrrad" (bicycle), and "das Flugzeug" (airplane), along with related vocabulary like "der Bahnhof" (train station) and "der Flughafen" (airport). The instructor covers travel verbs: "fahren" (to drive/go by vehicle), "fliegen" (to fly), "gehen" (to walk), and "reisen" (to travel). You'll master asking for and giving directions using "Wo ist...?" (Where is...?), "Wie komme ich zu...?" (How do I get to...?), and direction words like "links" (left), "rechts" (right), "geradeaus" (straight ahead). The lesson includes practical phrases for buying tickets, asking about schedules, and navigating public transportation. Cultural insights cover German public transport systems, travel customs, and popular vacation destinations. Interactive segments include map reading exercises, role-playing at ticket machines, and planning imaginary trips using transportation vocabulary and time expressions.`,
+          completed: false,
+          locked: true,
+          xp: 24,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
+        },
+        {
+          id: "lesson_010_02",
+          title: "Vocab List: Transport & Directions",
+          type: "vocab",
+          duration: "11 min",
+          completed: false,
+          locked: true,
+          xp: 16
+        },
+        {
+          id: "lesson_010_03",
+          title: "Flash Cards: Travel Vocabulary",
+          type: "flashcards",
+          duration: "19 min",
+          completed: false,
+          locked: true,
+          xp: 27
+        },
+        {
+          id: "lesson_010_04",
+          title: "Exercises: Journey Planning",
+          type: "exercises",
+          duration: "33 min",
+          completed: false,
+          locked: true,
+          xp: 43,
+          exerciseLevels: [
+            { level: 1, title: "Transport Recognition", completed: false, locked: true },
+            { level: 2, title: "Direction Giving", completed: false, locked: true },
+            { level: 3, title: "Ticket Purchases", completed: false, locked: true },
+            { level: 4, title: "Trip Planning", completed: false, locked: true }
+          ]
+        }
+      ]
+    },
+    {
+      id: "stage_011",
+      title: "Gesundheit und Körper",
+      description: "Health, body parts, and medical situations",
+      stageNumber: 6,
+      progress: 0,
+      locked: true,
+      completed: false,
+      lessons: [
+        {
+          id: "lesson_011_01",
+          title: "Video Lecture: Health & Body",
+          type: "video",
+          duration: "14 min",
+          videoSummary: `Learn essential German vocabulary for health, body parts, and medical situations in this vital lesson for daily life and emergencies. You'll master body part vocabulary from basic terms like "der Kopf" (head), "die Hand" (hand), "der Fuß" (foot) to internal organs and more specific parts. The instructor covers common health problems and symptoms: "Ich habe Kopfschmerzen" (I have a headache), "Mir ist schlecht" (I feel sick), "Ich bin erkältet" (I have a cold). You'll learn to express pain and discomfort, describe symptoms to a doctor, and understand basic medical advice. Essential phrases include making appointments: "Ich brauche einen Termin" (I need an appointment), asking for help: "Können Sie mir helfen?" (Can you help me?), and emergency expressions. The lesson includes cultural insights about the German healthcare system, pharmacy visits, and when to see a doctor versus self-care. Interactive elements feature body part identification exercises, symptom description practice, and role-playing doctor-patient conversations with authentic medical dialogue patterns.`,
+          completed: false,
+          locked: true,
+          xp: 18,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
+        },
+        {
+          id: "lesson_011_02",
+          title: "Vocab List: Body & Health",
+          type: "vocab",
+          duration: "9 min",
+          completed: false,
+          locked: true,
+          xp: 14
+        },
+        {
+          id: "lesson_011_03",
+          title: "Flash Cards: Medical Vocabulary",
+          type: "flashcards",
+          duration: "16 min",
+          completed: false,
+          locked: true,
+          xp: 24
+        },
+        {
+          id: "lesson_011_04",
+          title: "Exercises: Health Scenarios",
+          type: "exercises",
+          duration: "28 min",
+          completed: false,
+          locked: true,
+          xp: 38,
+          exerciseLevels: [
+            { level: 1, title: "Body Part Identification", completed: false, locked: true },
+            { level: 2, title: "Symptom Description", completed: false, locked: true },
+            { level: 3, title: "Doctor Visits", completed: false, locked: true }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+export const allCourses: CourseStructure[] = [courseData, courseDataA1_2];
