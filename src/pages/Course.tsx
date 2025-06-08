@@ -98,7 +98,8 @@ const Course = () => {
           <VideoPlayer
             title={currentLesson?.title || "Video Lesson"}
             description="Learn through interactive video content"
-            videoUrl={currentLesson?.url} // Pass the video URL
+            videoUrl={currentLesson?.url}
+            videoSummary={currentLesson?.videoSummary}
             onComplete={completeLesson}
           />
         );

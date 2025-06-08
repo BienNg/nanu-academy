@@ -1,14 +1,19 @@
 import { Button } from '@/components/ui/button';
-import { Play } from 'lucide-react';
+import { Play, Info } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { vscDarkPlus } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 interface VideoPlayerProps {
   title: string;
   description: string;
   videoUrl?: string;
+  videoSummary?: string;
   onComplete?: () => void;
 }
 
-const VideoPlayer = ({ title, description, videoUrl, onComplete }: VideoPlayerProps) => {
+const VideoPlayer = ({ title, description, videoUrl, videoSummary, onComplete }: VideoPlayerProps) => {
   const getGoogleDriveEmbedUrl = (url?: string): string | null => {
     if (!url) return null;
     const regex = /drive\.google\.com\/file\/d\/([^/]+)\//;
@@ -38,7 +43,6 @@ const VideoPlayer = ({ title, description, videoUrl, onComplete }: VideoPlayerPr
       {/* Video Header */}
       <div className="p-6 border-b">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">{title}</h2>
-        <p className="text-gray-600">{description}</p>
       </div>
 
       {/* Video Container */}
@@ -74,14 +78,65 @@ const VideoPlayer = ({ title, description, videoUrl, onComplete }: VideoPlayerPr
         )}
       </div>
 
-      {/* Video Info & Actions */}
-      <div className="p-6">
+      {/* Description */}
+      <div className="p-6 border-t border-gray-100">
+        <p className="text-gray-600 mb-6">{description}</p>
+
+        {/* Video Summary */}
+        {videoSummary && (
+          <div className="border-t border-gray-200 pt-6">
+            <div className="p-4 flex items-center bg-indigo-50 rounded-lg">
+              <Info className="h-5 w-5 text-indigo-600 mr-2" />
+              <h3 className="font-medium text-indigo-800">Lesson Summary</h3>
+            </div>
+            <div className="mt-4 prose prose-indigo max-w-none">
+              <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
+                components={{
+                  code: ({node, inline, className, children, ...props}: any) => {
+                    const match = /language-(\w+)/.exec(className || '');
+                    return !inline && match ? (
+                      <SyntaxHighlighter
+                        style={vscDarkPlus}
+                        language={match[1]}
+                        PreTag="div"
+                        {...props}
+                      >
+                        {String(children).replace(/\n$/, '')}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code className={className} {...props}>
+                        {children}
+                      </code>
+                    );
+                  },
+                  h2: ({node, ...props}) => <h2 className="text-xl font-semibold text-gray-900 mt-6 mb-3" {...props} />,
+                  h3: ({node, ...props}) => <h3 className="text-lg font-medium text-gray-800 mt-5 mb-2" {...props} />,
+                  p: ({node, ...props}) => <p className="text-gray-700 mb-4 leading-relaxed" {...props} />,
+                  ul: ({node, ...props}) => <ul className="list-disc pl-6 space-y-1 mb-4" {...props} />,
+                  ol: ({node, ...props}) => <ol className="list-decimal pl-6 space-y-1 mb-4" {...props} />,
+                  li: ({node, ...props}) => <li className="text-gray-700" {...props} />,
+                  strong: ({node, ...props}) => <strong className="font-semibold text-gray-900" {...props} />,
+                  a: ({node, ...props}) => <a className="text-indigo-600 hover:text-indigo-800 hover:underline" target="_blank" rel="noopener noreferrer" {...props} />,
+                  blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-indigo-200 pl-4 italic text-gray-600 my-4" {...props} />,
+                }}
+              >
+                {videoSummary}
+              </ReactMarkdown>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mark as Complete Button */}
+      <div className="p-6 border-t border-gray-100">
         <div className="flex items-center justify-end">
-          {onComplete && (
-            <Button className="bg-green-500 hover:bg-green-600" onClick={onComplete}>
-              Mark as Complete
-            </Button>
-          )}
+          <Button 
+            onClick={onComplete}
+            className="bg-green-500 hover:bg-green-600"
+          >
+            Mark as Complete
+          </Button>
         </div>
       </div>
     </div>

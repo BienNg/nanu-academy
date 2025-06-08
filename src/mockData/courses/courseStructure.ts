@@ -6,6 +6,7 @@ export interface CourseLesson {
   completed: boolean;
   locked: boolean;
   xp: number;
+  videoSummary?: string;
   url?: string;
   exerciseLevels?: {
     level: number;
@@ -55,9 +56,40 @@ export const courseData: CourseStructure = {
       lessons: [
         {
           id: "lesson_001_01",
-          title: "Sich begüßen",
+          title: "Sich begrüßen",
           type: "video",
           duration: "10 min",
+          videoSummary: `**Lesson Overview:**
+This lesson introduces you to the fundamental greetings and farewells in German, providing the building blocks for everyday conversation. Follow along with the video and use this summary as your reference and study guide.
+
+**What You’ll Learn:**
+- **Why Greetings Matter:**
+  - Discover the cultural significance of greetings in German-speaking countries and how they set the tone for interactions.
+- **Essential Greetings:**
+  - "Hallo" (Hello): The universal greeting for any time of day.
+  - "Guten Morgen" (Good morning), "Guten Tag" (Good day), "Guten Abend" (Good evening): Learn when and how to use each, with correct pronunciation and intonation.
+- **Formal vs. Informal:**
+  - Understand the difference between formal ("Sie") and informal ("du") address, and when to use each in greetings.
+- **Introducing Yourself:**
+  - Practice introducing yourself and responding to introductions in German, with sample phrases and dialogue.
+- **Common Farewells:**
+  - "Tschüss" (Bye), "Auf Wiedersehen" (Goodbye), "Bis bald" (See you soon): Learn how to say goodbye in various settings, both formal and informal.
+
+**Key Phrases & Pronunciation:**
+- Each greeting and farewell is broken down phonetically, with tips for mastering German sounds.
+- Repeat after the instructor and use the provided example sentences to build your confidence.
+
+**Cultural Notes:**
+- Explore regional variations in greetings and farewells across Germany, Austria, and Switzerland.
+- Learn about body language, eye contact, and handshake etiquette in German culture.
+
+**Practice Scenarios:**
+- Role-play meeting someone for the first time, entering a shop, or greeting classmates, using the phrases you’ve learned.
+- On-screen prompts and example dialogues help reinforce each phrase, making it easy to follow along and practice in real time.
+
+**By the End of This Lesson:**
+- You’ll be able to confidently greet and bid farewell in a variety of social situations, laying a strong foundation for your German language journey.
+`,
           completed: true,
           locked: false,
           xp: 15,
@@ -112,6 +144,7 @@ export const courseData: CourseStructure = {
           title: "Video Lecture: Numbers 1-100",
           type: "video",
           duration: "12 min",
+          videoSummary: `This comprehensive video lesson guides you through counting from 1 to 100 in German, starting with the basics and building up to more complex number patterns. The instructor begins by introducing the numbers 1 to 10, focusing on pronunciation, spelling, and mnemonic devices to aid memorization. You’ll hear each number pronounced slowly and clearly, with visual aids on screen. The lesson then progresses to numbers 11 through 20, highlighting unique patterns and exceptions. Next, you’ll explore the structure of tens (20, 30, 40, etc.) and learn how to construct compound numbers, such as 21 (einundzwanzig) and 57 (siebenundfünfzig), with clear explanations of German number-building rules. Practical exercises are included throughout: counting objects, answering "How many?" questions, and practicing with real-life scenarios like telling your age or giving a phone number. The instructor also covers tips for mastering tricky pronunciations and common mistakes to avoid. By the end of the video, you’ll have a strong grasp of German numbers up to 100, ready to use them confidently in conversation, shopping, and everyday life.`,
           completed: true,
           locked: false,
           xp: 15,
@@ -166,6 +199,7 @@ export const courseData: CourseStructure = {
           title: "Video Lecture: Articles & Objects",
           type: "video",
           duration: "14 min",
+          videoSummary: `This lesson delivers a deep dive into German articles—"der," "die," and "das"—and their use with everyday objects. The video opens with an explanation of grammatical gender in German, outlining why each noun is assigned a specific article. The instructor presents a curated list of common household and classroom objects, such as "der Tisch" (the table), "die Lampe" (the lamp), and "das Buch" (the book), with vivid images and clear pronunciation. You’ll learn strategies for remembering the correct article for each noun, including color-coding, rhymes, and association techniques. The lesson features interactive segments where you match objects to their articles, with instant feedback and explanations for each answer. Cultural notes are provided on regional variations and exceptions. The instructor also discusses plural forms and how articles change accordingly. Throughout the video, you’ll encounter mini-dialogues and real-life examples showing how to use these nouns and articles in context, such as describing your room or asking for an item in a store. By the end of the lesson, you’ll understand the logic behind German articles and feel confident using them with a wide range of everyday objects.`,
           completed: false,
           locked: false,
           xp: 15,
