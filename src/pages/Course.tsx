@@ -8,6 +8,7 @@ import FlashCard from '@/components/FlashCard';
 import QuizComponent from '@/components/QuizComponent';
 import { courseData, CourseLesson } from '@/mockData/courses/courseStructure';
 import { vocabulary } from '@/mockData/content/vocabulary';
+import { getQuizForStage } from '@/mockData/quizzes';
 
 const Course = () => {
   const { id } = useParams();
@@ -28,27 +29,8 @@ const Course = () => {
     example: '' // Example sentences could be added to the vocabulary data if needed
   }));
 
-  const quizData = [
-    {
-      id: '1',
-      type: 'der-die-das' as const,
-      question: 'Haus',
-      correctAnswer: 'das'
-    },
-    {
-      id: '2',
-      type: 'multiple-choice' as const,
-      question: 'What does "Guten Tag" mean?',
-      correctAnswer: 'good afternoon',
-      options: ['good morning', 'good afternoon', 'good night', 'goodbye']
-    },
-    {
-      id: '3',
-      type: 'type-answer' as const,
-      question: 'How do you say "water" in German?',
-      correctAnswer: 'wasser'
-    }
-  ];
+  // Get quiz data for the current stage
+  const quizData = getQuizForStage(currentStageId);
 
   // Flatten all lessons from all stages for the vertical map
   const allLessons = courseData.stages.flatMap(stage => stage.lessons);

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 
-interface QuizQuestion {
+export interface QuizQuestion {
   id: string;
   type: 'multiple-choice' | 'type-answer' | 'der-die-das';
   question: string;

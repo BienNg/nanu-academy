@@ -3,6 +3,8 @@ export * from './courses/courses';
 export * from './courses/stages';
 export * from './courses/lessons';
 
+export * from './quizzes';
+
 // Content
 export * from './content/vocabulary';
 export * from './content/flashcards';
