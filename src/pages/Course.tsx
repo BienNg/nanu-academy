@@ -98,6 +98,7 @@ const Course = () => {
           <VideoPlayer
             title={currentLesson?.title || "Video Lesson"}
             description="Learn through interactive video content"
+            videoUrl={currentLesson?.url} // Pass the video URL
             onComplete={completeLesson}
           />
         );
@@ -269,7 +270,7 @@ const Course = () => {
                         const typeColor = getTypeColor(lesson.type);
                         
                         return (
-                          <div key={lesson.id} className="relative py-8">
+                          <div key={lesson.id} className="relative py-12">
                             {/* Lesson Icon - Centered */}
                             <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 z-20">
                               <div className="flex justify-center">

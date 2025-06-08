@@ -1,4 +1,3 @@
-
 export interface CourseLesson {
   id: string;
   title: string;
@@ -7,6 +6,7 @@ export interface CourseLesson {
   completed: boolean;
   locked: boolean;
   xp: number;
+  url?: string;
   exerciseLevels?: {
     level: number;
     title: string;
@@ -46,7 +46,7 @@ export const courseData: CourseStructure = {
   stages: [
     {
       id: "stage_001",
-      title: "Greetings and Basic Phrases",
+      title: "Sich begüßen",
       description: "Learn basic German greetings and common phrases",
       stageNumber: 1,
       progress: 100,
@@ -55,12 +55,13 @@ export const courseData: CourseStructure = {
       lessons: [
         {
           id: "lesson_001_01",
-          title: "Video Lecture: Hello & Greetings",
+          title: "Sich begüßen",
           type: "video",
           duration: "10 min",
           completed: true,
           locked: false,
-          xp: 15
+          xp: 15,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
         },
         {
           id: "lesson_001_02",
@@ -113,7 +114,8 @@ export const courseData: CourseStructure = {
           duration: "12 min",
           completed: true,
           locked: false,
-          xp: 15
+          xp: 15,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
         },
         {
           id: "lesson_002_02",
@@ -166,7 +168,8 @@ export const courseData: CourseStructure = {
           duration: "14 min",
           completed: false,
           locked: false,
-          xp: 15
+          xp: 15,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
         },
         {
           id: "lesson_003_02",
@@ -219,7 +222,8 @@ export const courseData: CourseStructure = {
           duration: "16 min",
           completed: false,
           locked: true,
-          xp: 20
+          xp: 20,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
         },
         {
           id: "lesson_004_02",
@@ -272,7 +276,8 @@ export const courseData: CourseStructure = {
           duration: "11 min",
           completed: false,
           locked: true,
-          xp: 15
+          xp: 15,
+          url: "https://drive.google.com/file/d/1TGIW7-XvuW4F742f-DLQlpkmXPJqUvkc/view?usp=sharing"
         },
         {
           id: "lesson_005_02",
