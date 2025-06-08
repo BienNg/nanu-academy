@@ -48,13 +48,21 @@ const VideoPlayer = ({ title, description, videoUrl, onComplete }: VideoPlayerPr
         onContextMenu={(e) => e.preventDefault()} // Disable context menu
       >
         {embedUrl ? (
-          <iframe
-            src={embedUrl}
-            className="absolute top-0 left-0 w-full h-full"
-            title={title}
-            allow="autoplay; encrypted-media; fullscreen"
-            // sandbox attribute removed as it was causing playback issues with Google Drive
-          ></iframe>
+          <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', overflow: 'hidden' }}>
+            <iframe
+              src={embedUrl}
+              style={{
+                position: 'absolute',
+                top: '-60px', // Increased to hide the top bar more aggressively
+                left: '0',    // Reset left offset, button seems to be only at the top
+                width: '100%', // Reset width, button seems to be only at the top
+                height: 'calc(100% + 60px)', // Compensate for the upward shift
+                border: 'none',
+              }}
+              title={title}
+              allow="autoplay; encrypted-media; fullscreen"
+            ></iframe>
+          </div>
         ) : (
           <div className="absolute inset-0 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
             <div className="text-center text-white">
