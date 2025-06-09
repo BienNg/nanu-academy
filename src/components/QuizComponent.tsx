@@ -4,6 +4,7 @@ import { Check, X, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { getExercisesByStage } from '@/mockData/content/exercises/content';
 
 export interface QuizQuestion {
   id: string;
@@ -12,14 +13,15 @@ export interface QuizQuestion {
   correctAnswer: string;
   options?: string[];
   audio?: string;
+  word?: string; // For der-die-das exercises
 }
 
 interface QuizComponentProps {
-  questions: QuizQuestion[];
+  stageId: string;
   onComplete?: (score: number) => void;
 }
 
-const QuizComponent = ({ questions, onComplete }: QuizComponentProps) => {
+const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [typedAnswer, setTypedAnswer] = useState<string>('');
@@ -27,8 +29,70 @@ const QuizComponent = ({ questions, onComplete }: QuizComponentProps) => {
   const [isCorrect, setIsCorrect] = useState(false);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const loadQuestions = () => {
+      try {
+        const exercises = getExercisesByStage(stageId);
+        const mappedQuestions = exercises.map(exercise => {
+          // Create base question with common properties
+          const baseQuestion = {
+            id: exercise.id,
+            question: 'question' in exercise ? (exercise as any).question : '',
+            correctAnswer: 'correctAnswer' in exercise 
+              ? String((exercise as any).correctAnswer) 
+              : '',
+          };
+
+          // Handle different exercise types
+          if (exercise.type === 'multiple_choice' && 'options' in exercise) {
+            return {
+              ...baseQuestion,
+              type: 'multiple-choice' as const,
+              options: [...(exercise as any).options],
+            } as QuizQuestion;
+          } else if (exercise.type === 'der_die_das' && 'word' in exercise) {
+            return {
+              ...baseQuestion,
+              type: 'der-die-das' as const,
+              question: (exercise as any).word,
+              correctAnswer: (exercise as any).correctAnswer,
+              word: (exercise as any).word,
+            } as QuizQuestion;
+          } else if (exercise.type === 'type_answer') {
+            return {
+              ...baseQuestion,
+              type: 'type-answer' as const,
+            } as QuizQuestion;
+          }
+          return null;
+        }).filter((q): q is QuizQuestion => q !== null);
+
+        setQuestions(mappedQuestions);
+      } catch (error) {
+        console.error('Error loading questions:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadQuestions();
+  }, [stageId]);
+
+  if (isLoading) {
+    return <div className="text-center p-8">Loading questions...</div>;
+  }
+
+  if (questions.length === 0) {
+    return <div className="text-center p-8">No questions available for this stage.</div>;
+  }
 
   const currentQuestion = questions[currentIndex];
+  if (!currentQuestion) {
+    return <div className="text-center p-8">Error: Question not found</div>;
+  }
 
   const checkAnswer = () => {
     const userAnswer = currentQuestion.type === 'type-answer' ? typedAnswer.trim().toLowerCase() : selectedAnswer;

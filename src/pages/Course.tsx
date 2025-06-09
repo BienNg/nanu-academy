@@ -161,7 +161,7 @@ const Course = () => {
       case 'quiz':
         return (
           <QuizComponent
-            questions={quizData}
+            stageId={currentStageId}
             onComplete={(score) => {
               console.log('Quiz completed with score:', score);
               completeLesson();
