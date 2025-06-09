@@ -9,6 +9,7 @@ import QuizComponent from '@/components/QuizComponent';
 import { allCourses, CourseLesson } from '@/mockData/courses/courseStructure';
 import { vocabulary, getVocabularyForCourseAndStage } from '@/mockData/content/vocabulary';
 import { getQuizForStage } from '@/mockData/quizzes';
+import { getExercisesByLevel } from '@/mockData/content/exercises/content';
 
 const Course = () => {
   const { courseId } = useParams();
@@ -16,6 +17,7 @@ const Course = () => {
   const [currentSection, setCurrentSection] = useState<'overview' | 'video' | 'flashcards' | 'quiz' | 'vocab'>('overview');
   const [currentLesson, setCurrentLesson] = useState<CourseLesson | null>(null);
   const [currentStageId, setCurrentStageId] = useState<string>('');
+  const [selectedExerciseLevel, setSelectedExerciseLevel] = useState<number | null>(null);
 
   // Debug: Log the ID and available courses
   console.log('URL courseId:', courseId);
@@ -59,13 +61,19 @@ const Course = () => {
     example: '' // Example sentences could be added to the vocabulary data if needed
   }));
 
-  // Get quiz data for the current stage
+  // Get quiz data for the current stage and filter by selected level if applicable
   const quizData = currentStageId ? getQuizForStage(currentStageId) : [];
+  const exerciseData = selectedExerciseLevel && currentStageId
+    ? getExercisesByLevel(currentStageId, selectedExerciseLevel)
+    : [];
+  
+  // Use exercise data if available, otherwise fall back to quiz data
+  const filteredQuizData = exerciseData.length > 0 ? exerciseData : quizData;
 
   // Flatten all lessons from all stages for the vertical map
   const allLessons = course.stages.flatMap(stage => stage.lessons);
 
-  const startLesson = (lesson: CourseLesson) => {
+  const startLesson = (lesson: CourseLesson, exerciseLevel?: number) => {
     if (lesson.locked) return;
     
     // Find the stage that contains this lesson
@@ -78,6 +86,14 @@ const Course = () => {
     }
     
     setCurrentLesson(lesson);
+    
+    // If it's an exercise and a level is provided, set the selected level
+    if (lesson.type === 'exercises' && exerciseLevel) {
+      setSelectedExerciseLevel(exerciseLevel);
+    } else {
+      setSelectedExerciseLevel(null);
+    }
+    
     switch (lesson.type) {
       case 'video':
         setCurrentSection('video');
@@ -162,6 +178,7 @@ const Course = () => {
         return (
           <QuizComponent
             stageId={currentStageId}
+            exercises={filteredQuizData}
             onComplete={(score) => {
               console.log('Quiz completed with score:', score);
               completeLesson();
@@ -358,16 +375,25 @@ const Course = () => {
                               {lesson.type === 'exercises' && lesson.exerciseLevels && (
                                 <div className="mt-3 flex space-x-2">
                                   {lesson.exerciseLevels.map((level) => (
-                                    <div
+                                    <button
                                       key={level.level}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        startLesson(lesson, level.level);
+                                      }}
                                       className={`
                                         w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold
+                                        transition-all duration-200 transform hover:scale-110
                                         ${level.completed ? 'bg-green-500 text-white' : 
-                                          level.locked ? 'bg-gray-300 text-gray-500' : 'bg-blue-500 text-white'}
+                                          level.locked ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 
+                                          'bg-blue-500 text-white hover:bg-blue-600 cursor-pointer'}
+                                        ${selectedExerciseLevel === level.level ? 'ring-2 ring-offset-2 ring-blue-500' : ''}
                                       `}
+                                      disabled={level.locked}
+                                      aria-label={`Level ${level.level}${level.completed ? ' (completed)' : ''}${level.locked ? ' (locked)' : ''}`}
                                     >
                                       {level.level}
-                                    </div>
+                                    </button>
                                   ))}
                                 </div>
                               )}

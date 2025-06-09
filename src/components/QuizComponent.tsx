@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { getExercisesByStage } from '@/mockData/content/exercises/content';
+import type { Exercise } from '@/components/types';
 
 export interface QuizQuestion {
   id: string;
@@ -18,10 +19,11 @@ export interface QuizQuestion {
 
 interface QuizComponentProps {
   stageId: string;
+  exercises?: Exercise[] | QuizQuestion[];
   onComplete?: (score: number) => void;
 }
 
-const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
+const QuizComponent = ({ stageId, exercises, onComplete }: QuizComponentProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>('');
   const [typedAnswer, setTypedAnswer] = useState<string>('');
@@ -32,45 +34,108 @@ const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Map exercise types to quiz question types
+  const mapExerciseToQuestion = (exercise: Exercise | QuizQuestion): QuizQuestion | null => {
+    try {
+      console.log('Mapping exercise:', exercise);
+      
+      // If it's already a QuizQuestion, return it as is
+      if ('type' in exercise && ['multiple-choice', 'type-answer', 'der-die-das'].includes(exercise.type)) {
+        console.log('Already a QuizQuestion, returning as is');
+        return exercise as QuizQuestion;
+      }
+
+      // Map Exercise type to QuizQuestion type - handle both snake_case and kebab-case
+      const typeMap: Record<string, 'multiple-choice' | 'type-answer' | 'der-die-das'> = {
+        // Handle snake_case
+        'multiple_choice': 'multiple-choice',
+        'type_answer': 'type-answer',
+        'der_die_das': 'der-die-das',
+        'fill_blank': 'type-answer',
+        'matching': 'multiple-choice',
+        'true_false': 'multiple-choice',
+        // Handle kebab-case for consistency
+        'multiple-choice': 'multiple-choice',
+        'type-answer': 'type-answer',
+        'der-die-das': 'der-die-das',
+        'fill-blank': 'type-answer',
+        'true-false': 'multiple-choice'
+      };
+
+      // Get the mapped type or default to 'multiple-choice'
+      const questionType = typeMap[exercise.type as keyof typeof typeMap] || 'multiple-choice';
+      console.log(`Mapped exercise type ${exercise.type} to ${questionType}`);
+
+      // Base question with common fields
+      const baseQuestion = {
+        id: exercise.id,
+        type: questionType,
+        question: 'question' in exercise ? String(exercise.question) : '',
+        correctAnswer: 'correctAnswer' in exercise 
+          ? String(exercise.correctAnswer) 
+          : '',
+      };
+
+      // Handle different exercise types
+      const exerciseType = exercise.type.toLowerCase();
+      
+      // Handle multiple choice and similar types
+      if (exerciseType === 'multiple_choice' || exerciseType === 'multiple-choice' || 
+          exerciseType === 'matching' || exerciseType === 'true_false' || exerciseType === 'true-false') {
+        return {
+          ...baseQuestion,
+          type: 'multiple-choice',
+          options: [...(exercise as any).options || []],
+        };
+      }
+      
+      // Handle der/die/das questions
+      if (exerciseType === 'der_die_das' || exerciseType === 'der-die-das') {
+        return {
+          ...baseQuestion,
+          type: 'der-die-das',
+          question: (exercise as any).word || '',
+          correctAnswer: String((exercise as any).correctAnswer || '').toLowerCase(),
+          word: (exercise as any).word,
+        };
+      }
+      
+      // Handle type answer and fill in the blank
+      if (exerciseType === 'type_answer' || exerciseType === 'type-answer' || 
+          exerciseType === 'fill_blank' || exerciseType === 'fill-blank') {
+        return {
+          ...baseQuestion,
+          type: 'type-answer',
+        };
+      }
+      
+      console.warn(`Unhandled exercise type: ${exercise.type}`);
+      return null;
+    } catch (error) {
+      console.error('Error mapping exercise to question:', error, exercise);
+      return null;
+    }
+  };
+
   useEffect(() => {
-    const loadQuestions = () => {
+    const loadQuestions = async () => {
       try {
-        const exercises = getExercisesByStage(stageId);
-        const mappedQuestions = exercises.map(exercise => {
-          // Create base question with common properties
-          const baseQuestion = {
-            id: exercise.id,
-            question: 'question' in exercise ? (exercise as any).question : '',
-            correctAnswer: 'correctAnswer' in exercise 
-              ? String((exercise as any).correctAnswer) 
-              : '',
-          };
-
-          // Handle different exercise types
-          if (exercise.type === 'multiple_choice' && 'options' in exercise) {
-            return {
-              ...baseQuestion,
-              type: 'multiple-choice' as const,
-              options: [...(exercise as any).options],
-            } as QuizQuestion;
-          } else if (exercise.type === 'der_die_das' && 'word' in exercise) {
-            return {
-              ...baseQuestion,
-              type: 'der-die-das' as const,
-              question: (exercise as any).word,
-              correctAnswer: (exercise as any).correctAnswer,
-              word: (exercise as any).word,
-            } as QuizQuestion;
-          } else if (exercise.type === 'type_answer') {
-            return {
-              ...baseQuestion,
-              type: 'type-answer' as const,
-            } as QuizQuestion;
-          }
-          return null;
-        }).filter((q): q is QuizQuestion => q !== null);
-
-        setQuestions(mappedQuestions);
+        setIsLoading(true);
+        
+        // If exercises are provided via props, use them
+        if (exercises && exercises.length > 0) {
+          const mappedQuestions = exercises
+            .map(mapExerciseToQuestion)
+            .filter((q): q is QuizQuestion => q !== null);
+          setQuestions(mappedQuestions);
+        } else {
+          // Fallback to fetching by stageId
+          const exercisesByStage = getExercisesByStage(stageId);
+          const mappedQuestions = exercisesByStage
+            .map(mapExerciseToQuestion)
+            .filter((q): q is QuizQuestion => q !== null);
+          setQuestions(mappedQuestions);
+        }
       } catch (error) {
         console.error('Error loading questions:', error);
       } finally {
@@ -79,7 +144,7 @@ const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
     };
 
     loadQuestions();
-  }, [stageId]);
+  }, [stageId, exercises]);
 
   if (isLoading) {
     return <div className="text-center p-8">Loading questions...</div>;
@@ -95,126 +160,121 @@ const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
   }
 
   const checkAnswer = () => {
-    const userAnswer = currentQuestion.type === 'type-answer' ? typedAnswer.trim().toLowerCase() : selectedAnswer;
+    const userAnswer = currentQuestion.type === 'type-answer' 
+      ? typedAnswer.trim().toLowerCase() 
+      : selectedAnswer.toLowerCase();
+      
     const correct = userAnswer === currentQuestion.correctAnswer.toLowerCase();
     
     setIsCorrect(correct);
     setShowResult(true);
     
     if (correct) {
-      setScore(score + 1);
-      setStreak(streak + 1);
+      setScore(prev => prev + 1);
+      setStreak(prev => prev + 1);
     } else {
       setStreak(0);
     }
   };
 
-  const handleNext = () => {
+  const nextQuestion = () => {
     if (currentIndex < questions.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      setCurrentIndex(prev => prev + 1);
       setSelectedAnswer('');
       setTypedAnswer('');
       setShowResult(false);
-    } else {
-      if (onComplete) {
-        onComplete((score / questions.length) * 100);
-      }
+    } else if (onComplete) {
+      onComplete(score / questions.length * 100);
     }
   };
 
-  const playAudio = () => {
-    console.log('Playing audio for question:', currentQuestion.question);
-  };
-
   const renderQuestion = () => {
+    // Render the question text if it exists
+    const questionText = currentQuestion.question && (
+      <div className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+          {currentQuestion.question}
+        </h3>
+      </div>
+    );
+
     switch (currentQuestion.type) {
       case 'multiple-choice':
         return (
           <div className="space-y-4">
-            <h3 className="text-xl font-semibold text-center mb-6">{currentQuestion.question}</h3>
-            <div className="grid grid-cols-1 gap-3">
+            {questionText}
+            <div className="space-y-3">
               {currentQuestion.options?.map((option, index) => (
-                <Button
-                  key={index}
-                  variant={selectedAnswer === option ? "default" : "outline"}
-                  className={`p-4 h-auto text-left justify-start ${
-                    showResult
-                      ? option === currentQuestion.correctAnswer
-                        ? 'bg-green-500 text-white border-green-500'
-                        : selectedAnswer === option && !isCorrect
-                        ? 'bg-red-500 text-white border-red-500'
-                        : 'opacity-50'
-                      : selectedAnswer === option
-                      ? 'bg-blue-500 text-white'
-                      : 'hover:bg-gray-50'
-                  }`}
-                  onClick={() => !showResult && setSelectedAnswer(option)}
-                  disabled={showResult}
-                >
-                  {option}
-                  {showResult && option === currentQuestion.correctAnswer && (
-                    <Check className="h-5 w-5 ml-auto" />
-                  )}
-                  {showResult && selectedAnswer === option && !isCorrect && (
-                    <X className="h-5 w-5 ml-auto" />
-                  )}
-                </Button>
-              ))}
+              <Button
+                key={index}
+                variant={showResult 
+                  ? option === currentQuestion.correctAnswer
+                    ? 'default'
+                    : selectedAnswer === option
+                      ? 'destructive'
+                      : 'outline'
+                  : selectedAnswer === option
+                    ? 'secondary'
+                    : 'outline'
+                }
+                className="w-full justify-start text-left"
+                onClick={() => !showResult && setSelectedAnswer(option)}
+                disabled={showResult}
+              >
+                {option}
+              </Button>
+            ))}
             </div>
           </div>
         );
-
+        
       case 'type-answer':
         return (
-          <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-center">{currentQuestion.question}</h3>
-            <div className="max-w-md mx-auto">
-              <Input
-                value={typedAnswer}
-                onChange={(e) => setTypedAnswer(e.target.value)}
-                placeholder="Type your answer..."
-                className={`text-center text-lg ${
-                  showResult
-                    ? isCorrect
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-red-500 bg-red-50'
-                    : ''
-                }`}
-                disabled={showResult}
-                onKeyPress={(e) => e.key === 'Enter' && !showResult && typedAnswer.trim() && checkAnswer()}
-              />
-              {showResult && !isCorrect && (
-                <p className="text-center text-green-600 mt-2">
-                  Correct answer: <strong>{currentQuestion.correctAnswer}</strong>
-                </p>
-              )}
-            </div>
+          <div className="space-y-4">
+            <Input
+              type="text"
+              value={typedAnswer}
+              onChange={(e) => setTypedAnswer(e.target.value)}
+              placeholder="Type your answer..."
+              disabled={showResult}
+              className="text-lg py-6 px-4"
+            />
+            {showResult && (
+              <div className={`p-4 rounded-lg ${
+                isCorrect ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+              }`}>
+                {isCorrect ? 'Correct!' : `Incorrect. The answer is: ${currentQuestion.correctAnswer}`}
+              </div>
+            )}
           </div>
         );
-
+        
       case 'der-die-das':
-        const articles = ['der', 'die', 'das'];
         return (
           <div className="space-y-6">
-            <h3 className="text-xl font-semibold text-center">
-              Choose the correct article for: <span className="text-blue-600">{currentQuestion.question}</span>
-            </h3>
-            <div className="grid grid-cols-3 gap-4 max-w-md mx-auto">
-              {articles.map((article) => (
+            {questionText}
+            <div className="text-center p-6 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <p className="text-2xl font-bold mb-4">{currentQuestion.word}</p>
+              <p className="text-gray-600 dark:text-gray-300">
+                Select the correct article:
+              </p>
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {['der', 'die', 'das'].map((article) => (
                 <Button
                   key={article}
-                  variant={selectedAnswer === article ? "default" : "outline"}
-                  className={`p-6 text-lg font-bold ${
+                  variant={
                     showResult
                       ? article === currentQuestion.correctAnswer
-                        ? 'bg-green-500 text-white border-green-500'
-                        : selectedAnswer === article && !isCorrect
-                        ? 'bg-red-500 text-white border-red-500'
-                        : 'opacity-50'
+                        ? 'default'
+                        : selectedAnswer === article
+                          ? 'destructive'
+                          : 'outline'
                       : selectedAnswer === article
-                      ? 'bg-blue-500 text-white'
-                      : ''
-                  }`}
+                        ? 'secondary'
+                        : 'outline'
+                  }
+                  className="py-6 text-lg"
                   onClick={() => !showResult && setSelectedAnswer(article)}
                   disabled={showResult}
                 >
@@ -222,6 +282,11 @@ const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
                 </Button>
               ))}
             </div>
+            {showResult && !isCorrect && (
+              <div className="text-red-600 text-center">
+                Correct answer: {currentQuestion.correctAnswer}
+              </div>
+            )}
           </div>
         );
 
@@ -231,45 +296,19 @@ const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      {/* Progress Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between mb-4">
-          <div className="text-sm text-gray-600">
-            Question {currentIndex + 1} of {questions.length}
-          </div>
-          <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-600">
-              Score: {score}/{questions.length}
-            </div>
-            {streak > 0 && (
-              <div className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm font-semibold">
-                🔥 {streak} streak
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div
-            className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-            style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
-          />
+    <div className="max-w-2xl mx-auto p-4">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">
+          Question {currentIndex + 1} of {questions.length}
+        </h2>
+        <div className="text-lg font-medium">
+          Score: {score}/{questions.length}
         </div>
       </div>
-
-      {/* Question Card */}
-      <Card className="mb-8">
-        <CardContent className="p-8">
+      
+      <Card className="mb-6">
+        <CardContent className="p-6">
           {renderQuestion()}
-          
-          {currentQuestion.audio && (
-            <div className="flex justify-center mt-6">
-              <Button variant="outline" onClick={playAudio}>
-                <Volume2 className="h-4 w-4 mr-2" />
-                Play Audio
-              </Button>
-            </div>
-          )}
         </CardContent>
       </Card>
 
@@ -279,13 +318,12 @@ const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
           isCorrect ? 'bg-green-50 text-green-800' : 'bg-red-50 text-red-800'
         }`}>
           <div className="text-2xl mb-2">
-            {isCorrect ? '🎉 Correct!' : '❌ Incorrect'}
+            {isCorrect ? ' Correct!' : ' Incorrect'}
           </div>
           <p className="text-sm">
             {isCorrect 
-              ? 'Great job! Keep up the excellent work!' 
-              : 'Don\'t worry, you\'ll get it next time!'
-            }
+              ? 'Great job! Keep up the excellent work!'
+              : 'Keep trying! You can do it!'}
           </p>
         </div>
       )}
@@ -297,7 +335,7 @@ const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
             onClick={checkAnswer}
             disabled={
               (currentQuestion.type === 'type-answer' && !typedAnswer.trim()) ||
-              (currentQuestion.type !== 'type-answer' && !selectedAnswer)
+              (['multiple-choice', 'der-die-das'].includes(currentQuestion.type) && !selectedAnswer)
             }
             size="lg"
             className="px-8"
@@ -305,8 +343,8 @@ const QuizComponent = ({ stageId, onComplete }: QuizComponentProps) => {
             Check Answer
           </Button>
         ) : (
-          <Button onClick={handleNext} size="lg" className="px-8">
-            {currentIndex < questions.length - 1 ? 'Next Question' : 'Finish Quiz'}
+          <Button onClick={nextQuestion} className="ml-auto">
+            {currentIndex < questions.length - 1 ? 'Next Question' : 'Finish'}
           </Button>
         )}
       </div>
