@@ -385,7 +385,7 @@ export const courseDataA1_2: CourseStructure = {
           type: "vocab",
           duration: "7 min",
           completed: false,
-          locked: true,
+          locked: false,
           xp: 12
         },
         {
@@ -394,7 +394,7 @@ export const courseDataA1_2: CourseStructure = {
           type: "flashcards",
           duration: "16 min",
           completed: false,
-          locked: true,
+          locked: false,
           xp: 24
         },
         {
@@ -403,7 +403,7 @@ export const courseDataA1_2: CourseStructure = {
           type: "exercises",
           duration: "28 min",
           completed: false,
-          locked: true,
+          locked: false,
           xp: 36,
           exerciseLevels: [
             { level: 1, title: "Family Tree Completion", completed: false, locked: true },

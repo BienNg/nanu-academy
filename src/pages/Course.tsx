@@ -7,7 +7,7 @@ import VideoPlayer from '@/components/VideoPlayer';
 import FlashCard from '@/components/FlashCard';
 import QuizComponent from '@/components/QuizComponent';
 import { allCourses, CourseLesson } from '@/mockData/courses/courseStructure';
-import { vocabulary } from '@/mockData/content/vocabulary';
+import { vocabulary, getVocabularyForCourseAndStage } from '@/mockData/content/vocabulary';
 import { getQuizForStage } from '@/mockData/quizzes';
 
 const Course = () => {
@@ -44,12 +44,15 @@ const Course = () => {
     );
   }
 
-  // Get vocabulary items for the current stage
+  // Get vocabulary items for the current course and stage
   const getStageVocabulary = (stageId: string) => {
-    return Object.values(vocabulary).filter(item => item.stage_id === stageId);
+    if (!courseId) return [];
+    return getVocabularyForCourseAndStage(courseId, stageId);
   };
 
-  const flashcardsData = getStageVocabulary(currentStageId).map(item => ({
+  // Get vocabulary and quiz data for the current stage
+  const currentStageVocab = currentStageId ? getStageVocabulary(currentStageId) : [];
+  const flashcardsData = currentStageVocab.map(item => ({
     id: item.word_id,
     german: item.german,
     english: item.vietnamese,
@@ -57,7 +60,7 @@ const Course = () => {
   }));
 
   // Get quiz data for the current stage
-  const quizData = getQuizForStage(currentStageId);
+  const quizData = currentStageId ? getQuizForStage(currentStageId) : [];
 
   // Flatten all lessons from all stages for the vertical map
   const allLessons = course.stages.flatMap(stage => stage.lessons);
