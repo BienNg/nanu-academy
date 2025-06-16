@@ -14,15 +14,12 @@ interface Achievement {
 
 interface ProgressTrackerProps {
   level: number;
-  xp: number;
-  xpToNextLevel: number;
   streak: number;
   achievements: Achievement[];
 }
 
-const ProgressTracker = ({ level, xp, xpToNextLevel, streak, achievements }: ProgressTrackerProps) => {
+const ProgressTracker = ({ level, streak, achievements }: ProgressTrackerProps) => {
   const completedAchievements = achievements.filter(a => a.completed).length;
-  const progressToNextLevel = (xp / xpToNextLevel) * 100;
 
   return (
     <div className="space-y-6">
@@ -36,11 +33,6 @@ const ProgressTracker = ({ level, xp, xpToNextLevel, streak, achievements }: Pro
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            <div className="flex justify-between text-sm">
-              <span>{xp} XP</span>
-              <span>{xpToNextLevel} XP to next level</span>
-            </div>
-            <Progress value={progressToNextLevel} className="bg-white/20" />
             <div className="text-center">
               <p className="text-blue-100">Keep learning to reach Level {level + 1}!</p>
             </div>

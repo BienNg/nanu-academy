@@ -8,7 +8,7 @@ export const lessons = {
       duration: '10 min',
       completed: true,
       locked: false,
-      xp: 15,
+
       position: 'left'
     },
     {
@@ -18,7 +18,7 @@ export const lessons = {
       duration: '15 min',
       completed: true,
       locked: false,
-      xp: 20,
+
       position: 'right'
     },
     {
@@ -28,7 +28,7 @@ export const lessons = {
       duration: '5 min',
       completed: true,
       locked: false,
-      xp: 25,
+
       position: 'left'
     },
     {
@@ -38,7 +38,7 @@ export const lessons = {
       duration: '12 min',
       completed: false,
       locked: false,
-      xp: 30,
+
       position: 'center'
     },
     {
@@ -48,7 +48,7 @@ export const lessons = {
       duration: '10 min',
       completed: false,
       locked: true,
-      xp: 25,
+
       position: 'right'
     },
     {
@@ -58,7 +58,7 @@ export const lessons = {
       duration: '8 min',
       completed: false,
       locked: true,
-      xp: 35,
+
       position: 'left'
     },
     {
@@ -68,7 +68,7 @@ export const lessons = {
       duration: '15 min',
       completed: false,
       locked: true,
-      xp: 50,
+
       position: 'center',
       isCheckpoint: true
     }
@@ -83,7 +83,7 @@ export const lessons = {
       duration: '12 min',
       completed: true,
       locked: false,
-      xp: 20,
+
       position: 'left'
     },
     {
@@ -93,7 +93,7 @@ export const lessons = {
       duration: '10 min',
       completed: true,
       locked: false,
-      xp: 25,
+
       position: 'right'
     },
     {
@@ -103,7 +103,7 @@ export const lessons = {
       duration: '8 min',
       completed: false,
       locked: false,
-      xp: 30,
+
       position: 'left'
     }
   ]

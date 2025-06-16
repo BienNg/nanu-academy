@@ -115,7 +115,7 @@ const StageCard: React.FC<StageCardProps> = ({ stage, onLessonStart }) => {
                       <Clock className="h-3 w-3 mr-1" />
                       {lesson.duration}
                     </div>
-                    <div className="text-xs text-yellow-600 font-medium">+{lesson.xp} XP</div>
+
                     
                     {/* Exercise Levels (if applicable) */}
                     {lesson.type === 'exercises' && lesson.exerciseLevels && (

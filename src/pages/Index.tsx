@@ -8,12 +8,11 @@ import { allCourses } from '@/mockData/courses/courseStructure';
 
 const Index = () => {
   const [currentStreak, setCurrentStreak] = useState(7);
-  const [totalXP, setTotalXP] = useState(1250);
 
   const recentActivity = [
-    { lesson: "Articles: der, die, das", xp: 50, completed: true },
-    { lesson: "Common Verbs", xp: 45, completed: true },
-    { lesson: "Family Vocabulary", xp: 60, completed: false }
+    { lesson: "Articles: der, die, das", completed: true },
+    { lesson: "Common Verbs", completed: true },
+    { lesson: "Family Vocabulary", completed: false }
   ];
 
   // Use the first course as the main CTA
@@ -39,10 +38,7 @@ const Index = () => {
                 <span className="text-orange-600 font-semibold">{currentStreak}</span>
                 <span className="text-orange-600 text-sm">day streak</span>
               </div>
-              <div className="flex items-center space-x-2 bg-yellow-100 px-3 py-1 rounded-full">
-                <Star className="h-4 w-4 text-yellow-600" />
-                <span className="text-yellow-600 font-semibold">{totalXP} XP</span>
-              </div>
+
             </div>
           </div>
         </div>
@@ -136,7 +132,6 @@ const Index = () => {
                         <div className={`w-3 h-3 rounded-full ${activity.completed ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                         <div>
                           <p className="text-sm font-medium">{activity.lesson}</p>
-                          <p className="text-xs text-gray-500">+{activity.xp} XP</p>
                         </div>
                       </div>
                       {activity.completed && (

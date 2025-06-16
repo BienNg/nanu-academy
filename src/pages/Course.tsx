@@ -368,7 +368,6 @@ const Course = () => {
                               <div className="flex items-center text-xs text-gray-600 mb-2">
                                 <Clock className="h-3 w-3 mr-1" />
                                 <span>{lesson.duration}</span>
-                                <span className="ml-4 text-yellow-600 font-medium">+{lesson.xp} XP</span>
                               </div>
 
                               <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${typeColor}`}>

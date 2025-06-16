@@ -9,7 +9,6 @@ type UserProgress = {
       progress: number;
       completedLessons: string[];
       lastAccessed: string;
-      xpEarned: number;
     };
   };
   streaks: {
@@ -28,15 +27,13 @@ export const userProgress: Record<string, UserProgress> = {
         completed: false,
         progress: 35,
         completedLessons: ['lesson-1', 'lesson-2', 'lesson-3'],
-        lastAccessed: new Date().toISOString(),
-        xpEarned: 60
+        lastAccessed: new Date().toISOString()
       },
       'course_002': {
         completed: false,
         progress: 15,
         completedLessons: ['a2-lesson-1', 'a2-lesson-2'],
-        lastAccessed: new Date(Date.now() - 86400000).toISOString(), // Yesterday
-        xpEarned: 45
+        lastAccessed: new Date(Date.now() - 86400000).toISOString() // Yesterday
       }
     },
     streaks: {
@@ -55,8 +52,7 @@ export const getUserProgress = (userId: string): UserProgress | undefined => {
 export const updateLessonCompletion = (
   userId: string, 
   courseId: string, 
-  lessonId: string,
-  xp: number
+  lessonId: string
 ): void => {
   const user = userProgress[userId];
   if (!user) return;
@@ -66,8 +62,7 @@ export const updateLessonCompletion = (
       completed: false,
       progress: 0,
       completedLessons: [],
-      lastAccessed: new Date().toISOString(),
-      xpEarned: 0
+      lastAccessed: new Date().toISOString()
     };
   }
   
@@ -76,7 +71,6 @@ export const updateLessonCompletion = (
   // Add lesson to completed if not already there
   if (!course.completedLessons.includes(lessonId)) {
     course.completedLessons.push(lessonId);
-    course.xpEarned += xp;
     
     // Update progress percentage
     const courseLessons = lessons[courseId as keyof typeof lessons] || [];
