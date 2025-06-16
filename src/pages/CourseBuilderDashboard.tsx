@@ -11,6 +11,7 @@ import CourseGrid from '@/components/dashboard/CourseGrid';
 
 // Hooks
 import { useCourseData } from '@/hooks/useCourseData';
+import { useMockCourseData } from '@/hooks/useMockCourseData';
 
 // UI Components
 import { Button } from '@/components/ui/button';
@@ -20,7 +21,8 @@ import { Textarea } from '@/components/ui/textarea';
 
 const CourseBuilderDashboard = () => {
   const navigate = useNavigate();
-  const { courses, loading, error } = useCourseData();
+  const { courses: realCourses, loading: realLoading, error: realError } = useCourseData();
+  const { courses: mockCourses, loading: mockLoading, error: mockError } = useMockCourseData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [courseTitle, setCourseTitle] = useState('');
   const [courseDescription, setCourseDescription] = useState('');
@@ -90,25 +92,25 @@ const CourseBuilderDashboard = () => {
       <DashboardHeader onCreateCourse={handleCreateCourse} />
       
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-8">
-        <StatsOverview courses={courses} />
+        <StatsOverview courses={realCourses} />
         
-        {/* Database Courses List */}
+        {/* Mock Courses List */}
         <div className="mb-12">
           <div className="mb-6 flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">All Courses in Database</h2>
             <div className="text-sm text-gray-500">
-              {!loading && `${courses.length} courses in database`}
+              {!mockLoading && `${mockCourses.length} courses in database`}
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
             <div className="overflow-x-auto">
-              {loading ? (
+              {mockLoading ? (
                 <div className="p-8 text-center">
                   <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-indigo-600 border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"></div>
                   <p className="mt-4 text-gray-600">Loading courses...</p>
                 </div>
-              ) : error ? (
+              ) : mockError ? (
                 <div className="p-8 text-center">
                   <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-100 mb-4">
                     <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -116,7 +118,7 @@ const CourseBuilderDashboard = () => {
                     </svg>
                   </div>
                   <p className="text-red-600 font-medium mb-2">Error loading courses</p>
-                  <p className="text-gray-600">{error}</p>
+                  <p className="text-gray-600">{mockError}</p>
                 </div>
               ) : (
                 <table className="min-w-full divide-y divide-gray-200">
@@ -140,7 +142,7 @@ const CourseBuilderDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {courses.map((course) => (
+                    {mockCourses.map((course) => (
                       <tr key={course.id} className="hover:bg-gray-50">
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="flex items-center">
@@ -178,7 +180,7 @@ const CourseBuilderDashboard = () => {
                         </td>
                       </tr>
                     ))}
-                    {courses.length === 0 && (
+                    {mockCourses.length === 0 && (
                       <tr>
                         <td colSpan={5} className="px-6 py-4 text-center text-sm text-gray-500">
                           No courses found. Create your first course to get started.
@@ -192,8 +194,8 @@ const CourseBuilderDashboard = () => {
           </div>
         </div>
         
-        {/* Original Course Grid */}
-        <CourseGrid courses={courses} onEditCourse={handleEditCourse} loading={loading} error={error} />
+        {/* Real Courses Grid */}
+        <CourseGrid courses={realCourses} onEditCourse={handleEditCourse} loading={realLoading} error={realError} />
       </div>
 
       {/* Create Course Modal */}
