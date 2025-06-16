@@ -9,6 +9,7 @@ export interface Course {
   exercises: number;
   status: 'published' | 'draft';
   lastUpdated: string;
-  completion: number;
-  rating: number;
+  completion?: number;
+  rating?: number;
+  createdAt?: Date;
 }
