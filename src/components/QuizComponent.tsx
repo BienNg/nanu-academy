@@ -39,10 +39,15 @@ const QuizComponent = ({ stageId, exercises, onComplete }: QuizComponentProps) =
     try {
       console.log('Mapping exercise:', exercise);
       
-      // If it's already a QuizQuestion, return it as is
+      // If it's already a QuizQuestion, ensure it has the correct type and return it
       if ('type' in exercise && ['multiple-choice', 'type-answer', 'der-die-das'].includes(exercise.type)) {
         console.log('Already a QuizQuestion, returning as is');
-        return exercise as QuizQuestion;
+        const quizQuestion = exercise as QuizQuestion;
+        return {
+          ...quizQuestion,
+          question: quizQuestion.question || 'Answer the question:',
+          type: quizQuestion.type as 'multiple-choice' | 'type-answer' | 'der-die-das',
+        };
       }
 
       // Map Exercise type to QuizQuestion type - handle both snake_case and kebab-case
@@ -70,7 +75,7 @@ const QuizComponent = ({ stageId, exercises, onComplete }: QuizComponentProps) =
       const baseQuestion = {
         id: exercise.id,
         type: questionType,
-        question: 'question' in exercise ? String(exercise.question) : '',
+        question: 'question' in exercise ? String(exercise.question) : 'Answer the question:',
         correctAnswer: 'correctAnswer' in exercise 
           ? String(exercise.correctAnswer) 
           : '',
@@ -82,21 +87,24 @@ const QuizComponent = ({ stageId, exercises, onComplete }: QuizComponentProps) =
       // Handle multiple choice and similar types
       if (exerciseType === 'multiple_choice' || exerciseType === 'multiple-choice' || 
           exerciseType === 'matching' || exerciseType === 'true_false' || exerciseType === 'true-false') {
+        const typedExercise = exercise as any;
         return {
           ...baseQuestion,
-          type: 'multiple-choice',
-          options: [...(exercise as any).options || []],
+          type: 'multiple-choice' as const,
+          options: [...(typedExercise.options || [])],
         };
       }
       
       // Handle der/die/das questions
       if (exerciseType === 'der_die_das' || exerciseType === 'der-die-das') {
+        const typedExercise = exercise as any;
+        const word = typedExercise.word || '';
         return {
           ...baseQuestion,
-          type: 'der-die-das',
-          question: (exercise as any).word || '',
-          correctAnswer: String((exercise as any).correctAnswer || '').toLowerCase(),
-          word: (exercise as any).word,
+          type: 'der-die-das' as const,
+          question: `Select the correct article for: ${word}`,
+          correctAnswer: String(typedExercise.correctAnswer || '').toLowerCase(),
+          word: word,
         };
       }
       
@@ -231,6 +239,7 @@ const QuizComponent = ({ stageId, exercises, onComplete }: QuizComponentProps) =
       case 'type-answer':
         return (
           <div className="space-y-4">
+            {questionText}
             <Input
               type="text"
               value={typedAnswer}

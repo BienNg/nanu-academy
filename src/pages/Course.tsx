@@ -67,6 +67,10 @@ const Course = () => {
     ? getExercisesByLevel(currentStageId, selectedExerciseLevel)
     : [];
   
+  // Log the data for debugging
+  console.log('Quiz Data:', quizData);
+  console.log('Exercise Data:', exerciseData);
+  
   // Use exercise data if available, otherwise fall back to quiz data
   const filteredQuizData = exerciseData.length > 0 ? exerciseData : quizData;
 
